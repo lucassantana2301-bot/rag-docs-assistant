@@ -39,7 +39,6 @@ uv run rag serve   # API e interface em http://localhost:8000
 
 ## Release
 
-1. Atualize o `CHANGELOG.md` movendo os itens de `[Não lançado]` para a nova versão.
-2. Atualize a versão do projeto (`__version__` em `src/rag_docs/__init__.py`).
-3. Crie e envie a tag: `git tag -a vX.Y.Z -m "vX.Y.Z" && git push origin vX.Y.Z`.
-4. O workflow `release.yml` valida, publica os artefatos e cria a release com as notas do CHANGELOG.
+1. Em um PR, mova os itens de `[Não lançado]` do `CHANGELOG.md` para a nova versão e atualize `__version__` em `src/rag_docs/__init__.py`.
+2. Ao integrar o PR na `main`, o workflow `release.yml` percebe a versão nova, valida o código (incluindo o portão do golden set), publica wheel, sdist e imagem e cria a tag `vX.Y.Z` e a release com as notas do CHANGELOG.
+3. Também é possível disparar pela aba Actions (`workflow_dispatch`) ou enviando a tag à mão.

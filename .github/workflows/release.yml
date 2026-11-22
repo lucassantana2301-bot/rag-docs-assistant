@@ -1,27 +1,59 @@
 name: Release
 
-# Disparado por tag SemVer (vX.Y.Z): valida, gera wheel/sdist, publica a imagem no GHCR com
-# SBOM e proveniência e cria a release com as notas do CHANGELOG e os pacotes anexados.
+# Release automática: quando `__version__` muda na main e ainda não existe a release, valida,
+# gera wheel/sdist, publica a imagem no GHCR com SBOM e proveniência e cria a tag e a release
+# com as notas do CHANGELOG e os pacotes anexados. Também aceita tag vX.Y.Z enviada à mão.
 
 on:
   push:
+    branches: [main]
+    paths: [src/rag_docs/__init__.py]
     tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release
   cancel-in-progress: false
 
-env:
-  VERSION: ${{ github.ref_name }}
-
 jobs:
+  prepare:
+    name: Versão a publicar
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      publish: ${{ steps.version.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        run: |
+          version="v$(sed -nE 's/^__version__ = "([^"]+)"/\1/p' src/rag_docs/__init__.py)"
+          if [ "$version" = "v" ]; then echo "::error::__version__ não encontrado"; exit 1; fi
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ "$GITHUB_REF_NAME" != "$version" ]; then
+            echo "::error::tag $GITHUB_REF_NAME diferente da versão do pacote ($version)"
+            exit 1
+          fi
+          if gh release view "$version" >/dev/null 2>&1; then
+            echo "Release $version já existe; nada a publicar."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   verify:
     name: Validação e pacotes
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.4.0
@@ -29,14 +61,6 @@ jobs:
           python-version: '3.15'
           enable-cache: true
       - run: uv sync --frozen
-
-      - name: Tag bate com a versão do pacote
-        run: |
-          expected="v$(uv run python -c 'import rag_docs; print(rag_docs.__version__)')"
-          if [ "$VERSION" != "$expected" ]; then
-            echo "::error::tag $VERSION diferente da versão do pacote ($expected)"
-            exit 1
-          fi
 
       - name: CHANGELOG tem a seção da versão
         run: scripts/changelog-section.sh "${VERSION#v}" > /dev/null
@@ -59,7 +83,7 @@ jobs:
 
   image:
     name: Imagem Docker
-    needs: verify
+    needs: [prepare, verify]
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
@@ -80,8 +104,9 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}},value=${{ needs.prepare.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.prepare.outputs.version }}
+            type=semver,pattern={{major}},value=${{ needs.prepare.outputs.version }}
             type=raw,value=latest
       - id: push
         uses: docker/build-push-action@v7
@@ -102,11 +127,13 @@ jobs:
 
   release:
     name: GitHub Release
-    needs: image
+    needs: [prepare, image]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: write
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
@@ -127,6 +154,6 @@ jobs:
             echo
             echo "Relatório de avaliação: https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"
           } > notes.md
-          gh release create "$VERSION" dist/* --title "$VERSION" --notes-file notes.md --verify-tag
+          gh release create "$VERSION" dist/* --target "$GITHUB_SHA" --title "$VERSION" --notes-file notes.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
