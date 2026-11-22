@@ -20,10 +20,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.12', '3.13']
+        python: ['3.12', '3.15']
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v8.1.0  # tags imutáveis a partir da v8
+      - uses: astral-sh/setup-uv@v10.4.0  # tags imutáveis desde a v8
         with:
           python-version: ${{ matrix.python }}
           enable-cache: true
@@ -34,7 +34,7 @@ jobs:
       - run: uv run pytest --cov --cov-report=term-missing
 
       - name: Avaliação de qualidade (golden set)
-        if: matrix.python == '3.13'
+        if: matrix.python == '3.15'
         run: |
           uv run rag --db /tmp/eval.db ingest corpus
           {
