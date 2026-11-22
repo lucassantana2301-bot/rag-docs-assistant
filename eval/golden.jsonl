@@ -1,0 +1,38 @@
+{"question": "Quantos dias de férias posso vender?", "sources": ["politica-de-ferias.md"], "must_contain": ["10 dias"]}
+{"question": "Em quantos períodos posso dividir minhas férias?", "sources": ["politica-de-ferias.md"], "must_contain": ["três períodos"]}
+{"question": "Com quanta antecedência preciso combinar as férias com o gestor?", "sources": ["politica-de-ferias.md"], "must_contain": ["45 dias"]}
+{"question": "Estagiário tem direito a vender o recesso?", "sources": ["politica-de-ferias.md"], "must_contain": ["não pode ser vendido"]}
+{"question": "Qual o prazo para pedir reembolso de despesas?", "sources": ["reembolso-de-despesas.md"], "must_contain": ["30 dias"]}
+{"question": "Qual o limite diário para refeições quando estou viajando a trabalho?", "sources": ["reembolso-de-despesas.md"], "must_contain": ["R$ 120,00"]}
+{"question": "Quanto a empresa paga por quilômetro se eu usar meu carro?", "sources": ["reembolso-de-despesas.md"], "must_contain": ["1,10"]}
+{"question": "Em que dia da semana o reembolso cai na conta?", "sources": ["reembolso-de-despesas.md"], "must_contain": ["quinta-feira"]}
+{"question": "Quem aciona o incident commander num SEV1?", "sources": ["runbook-de-incidentes.md"], "must_contain": ["plantão"]}
+{"question": "Qual o prazo para escrever o postmortem de um incidente?", "sources": ["runbook-de-incidentes.md"], "must_contain": ["5 dias úteis"]}
+{"question": "Com que frequência atualizar a status page durante um incidente grave?", "sources": ["runbook-de-incidentes.md"], "must_contain": ["30 minutos"]}
+{"question": "Em quanto tempo o plantonista precisa responder um alerta?", "sources": ["runbook-de-incidentes.md"], "must_contain": ["5 minutos"]}
+{"question": "Posso fazer deploy na sexta-feira?", "sources": ["guia-de-deploy.md"], "must_contain": ["sexta-feira"]}
+{"question": "Como funciona o canary dos serviços de pagamento?", "sources": ["guia-de-deploy.md"], "must_contain": ["5%"]}
+{"question": "Quanto tempo leva para reverter uma versão em produção?", "sources": ["guia-de-deploy.md"], "must_contain": ["3 minutos"]}
+{"question": "Quantas aprovações precisa um PR que mexe em regras de antifraude?", "sources": ["guia-de-deploy.md", "code-review.md"], "must_contain": ["duas aprovações"]}
+{"question": "Posso usar SMS como segundo fator de autenticação?", "sources": ["politica-de-seguranca-da-informacao.md"], "must_contain": ["SMS"]}
+{"question": "Por quanto tempo vale o acesso temporário ao ambiente de produção?", "sources": ["politica-de-seguranca-da-informacao.md"], "must_contain": ["4 horas"]}
+{"question": "Perdi meu notebook, em quanto tempo tenho que avisar?", "sources": ["politica-de-seguranca-da-informacao.md"], "must_contain": ["2 horas"]}
+{"question": "Posso colar código da empresa no ChatGPT?", "sources": ["politica-de-seguranca-da-informacao.md"], "must_contain": ["aprovadas"]}
+{"question": "Qual a meta de latência da API de pagamentos?", "sources": ["arquitetura-de-pagamentos.md"], "must_contain": ["300 ms"]}
+{"question": "Como o sistema evita cobrar o mesmo pagamento duas vezes?", "sources": ["arquitetura-de-pagamentos.md"], "must_contain": ["Idempotency-Key"]}
+{"question": "Por que usamos o padrão outbox?", "sources": ["arquitetura-de-pagamentos.md"], "must_contain": ["mesma transação"]}
+{"question": "Quais dias da semana o time precisa ir ao escritório?", "sources": ["politica-de-trabalho-hibrido.html"], "must_contain": ["terças"]}
+{"question": "Posso trabalhar de outro país por algumas semanas?", "sources": ["politica-de-trabalho-hibrido.html"], "must_contain": ["30 dias"]}
+{"question": "Qual é o horário central para marcar reuniões?", "sources": ["politica-de-trabalho-hibrido.html"], "must_contain": ["10h às 16h"]}
+{"question": "Qual a antecedência mínima para comprar passagem de voo nacional?", "sources": ["politica-de-viagens.pdf"], "must_contain": ["14 dias"]}
+{"question": "Qual o valor da diária em viagem internacional?", "sources": ["politica-de-viagens.pdf"], "must_contain": ["US$ 70"]}
+{"question": "A empresa reembolsa a prova de certificação AWS?", "sources": ["beneficios.md"], "must_contain": ["primeira tentativa"]}
+{"question": "Qual o valor do vale alimentação?", "sources": ["beneficios.md"], "must_contain": ["1.200,00"]}
+{"question": "Quanto tempo dura a licença-paternidade?", "sources": ["beneficios.md"], "must_contain": ["40 dias"]}
+{"question": "Qual o tamanho ideal de um pull request?", "sources": ["code-review.md"], "must_contain": ["400 linhas"]}
+{"question": "O que preciso fazer na primeira semana como engenheiro novo?", "sources": ["onboarding-engenharia.md"], "must_contain": ["deploy"]}
+{"question": "Quando entro na escala de plantão depois de contratado?", "sources": ["onboarding-engenharia.md"], "must_contain": ["90 dias"]}
+{"question": "Qual é a política de stock options da empresa?", "answerable": false}
+{"question": "Quantos funcionários a empresa tem no Japão?", "answerable": false}
+{"question": "Qual o salário inicial de um engenheiro júnior?", "answerable": false}
+{"question": "Como configuro o cluster Kubernetes de machine learning?", "answerable": false}
