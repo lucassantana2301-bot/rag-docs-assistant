@@ -1,0 +1,75 @@
+[project]
+name = "rag-docs-assistant"
+version = "0.1.0"
+description = "Assistente de perguntas sobre documentos internos com busca híbrida (BM25 + vetores), respostas citadas e avaliação automática."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Lucas Santana Santos" }]
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.165,<1",
+  "uvicorn[standard]>=0.54",
+  "pydantic>=2.14,<3",
+  "pydantic-settings>=2.16,<3",
+  "python-multipart>=0.0.34",
+  "httpx>=0.28,<1",
+  "numpy>=2.5,<3",
+  "pypdf>=7.1,<8",
+  "beautifulsoup4>=4.15,<5",
+]
+
+[project.scripts]
+rag = "rag_docs.cli:main"
+
+[dependency-groups]
+dev = [
+  "pytest>=9.2",
+  "pytest-cov>=7",
+  "ruff>=0.17",
+  "mypy>=2.4",
+  "types-beautifulsoup4>=4.12",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_docs"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "N", "PTH", "RET", "C4"]
+ignore = [
+  "RUF001", "RUF002", "RUF003",  # acentos e aspas tipográficas são intencionais em português
+  "SIM905",                       # lista de stopwords é mais legível como texto
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["pypdf.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+filterwarnings = [
+  "error",
+  # O TestClient do Starlette ainda usa httpx; o aviso é da biblioteca, não do projeto.
+  "ignore::DeprecationWarning:fastapi.testclient",
+  "ignore:Using `httpx` with `starlette.testclient`",
+]
+
+[tool.coverage.run]
+source = ["rag_docs"]
+branch = true
