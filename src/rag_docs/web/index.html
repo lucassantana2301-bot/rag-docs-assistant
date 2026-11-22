@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:" />
+    <title>RAG Docs Assistant</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236366f1'/><path d='M9 9h10l4 4v10H9z' fill='none' stroke='white' stroke-width='2.4' stroke-linejoin='round'/><path d='M13 17h6M13 21h4' stroke='white' stroke-width='2.4' stroke-linecap='round'/></svg>" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Documentos indexados">
+        <div class="brand">
+          <span class="logo" aria-hidden="true"></span>
+          <div>
+            <h1>RAG Docs Assistant</h1>
+            <p id="engine">carregando…</p>
+          </div>
+        </div>
+        <h2>Documentos <span id="doc-count" class="count"></span></h2>
+        <ul id="documents" class="documents"></ul>
+      </aside>
+
+      <main class="main">
+        <form id="ask-form" class="ask" autocomplete="off">
+          <label for="question" class="sr-only">Pergunta</label>
+          <input id="question" name="question" maxlength="1000" placeholder="Pergunte sobre os documentos da empresa…" required />
+          <button type="submit" id="ask-button">Perguntar</button>
+        </form>
+        <div class="suggestions" id="suggestions" aria-label="Sugestões de pergunta"></div>
+
+        <section id="result" class="result" aria-live="polite" hidden>
+          <article class="answer">
+            <header>
+              <span class="label">Resposta</span>
+              <span id="grounded" class="badge"></span>
+            </header>
+            <p id="answer-text"></p>
+          </article>
+          <section class="sources" aria-labelledby="sources-title">
+            <h2 id="sources-title">Fontes citadas</h2>
+            <ol id="citations" class="citations"></ol>
+          </section>
+          <details class="retrieved">
+            <summary>Trechos recuperados (busca híbrida)</summary>
+            <table>
+              <thead>
+                <tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr>
+              </thead>
+              <tbody id="retrieved"></tbody>
+            </table>
+          </details>
+        </section>
+        <p id="error" class="error" role="alert" hidden></p>
+      </main>
+    </div>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
