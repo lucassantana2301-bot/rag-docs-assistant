@@ -29,6 +29,48 @@ class RetrievalMetrics:
 
 
 @dataclass(frozen=True, slots=True)
+class RetrievedSource:
+    source: str
+    heading: str
+    score: float
+    lexical_rank: int | None
+    vector_rank: int | None
+    relevant: bool
+
+
+@dataclass(frozen=True, slots=True)
+class CitedSource:
+    number: int
+    source: str
+    heading: str
+    excerpt: str
+    expected: bool
+
+
+@dataclass(frozen=True, slots=True)
+class CaseResult:
+    """Resultado de uma pergunta de referência, com o que foi recuperado e respondido."""
+
+    question: str
+    answerable: bool
+    expected_sources: list[str]
+    must_contain: list[str]
+    retrieved: list[RetrievedSource]
+    first_relevant_rank: int | None
+    answer: str
+    grounded: bool
+    citations: list[CitedSource]
+    cites_expected: bool
+    contains_facts: bool
+
+    @property
+    def passed(self) -> bool:
+        if not self.answerable:
+            return not self.grounded
+        return self.first_relevant_rank is not None and self.cites_expected and self.contains_facts
+
+
+@dataclass(frozen=True, slots=True)
 class AnswerMetrics:
     cases: int
     faithful_citation_rate: float
@@ -95,6 +137,52 @@ def evaluate_answers(service: RagService, cases: list[GoldenCase]) -> AnswerMetr
         contains_rate=round(contains / (len(answerable) or 1), 4),
         correct_refusal_rate=round(refusals / (len(unanswerable) or 1), 4),
     )
+
+
+def evaluate_cases(service: RagService, cases: list[GoldenCase], *, k: int = 5) -> list[CaseResult]:
+    """Detalha cada pergunta (busca híbrida + resposta) para o relatório navegável."""
+    results: list[CaseResult] = []
+    for case in cases:
+        hits = service.search(case.question, limit=k, mode="hybrid")
+        retrieved = [
+            RetrievedSource(
+                source=hit.source,
+                heading=hit.heading,
+                score=round(hit.score, 6),
+                lexical_rank=hit.lexical_rank,
+                vector_rank=hit.vector_rank,
+                relevant=hit.source in case.expected_sources,
+            )
+            for hit in hits
+        ]
+        first_relevant = next((i for i, hit in enumerate(retrieved, start=1) if hit.relevant), None)
+        answer = service.ask(case.question)
+        citations = [
+            CitedSource(
+                number=c.number,
+                source=c.source,
+                heading=c.heading,
+                excerpt=c.excerpt,
+                expected=c.source in case.expected_sources,
+            )
+            for c in answer.citations
+        ]
+        results.append(
+            CaseResult(
+                question=case.question,
+                answerable=case.answerable,
+                expected_sources=sorted(case.expected_sources),
+                must_contain=list(case.must_contain),
+                retrieved=retrieved,
+                first_relevant_rank=first_relevant,
+                answer=answer.text,
+                grounded=answer.grounded,
+                citations=citations,
+                cites_expected=any(c.expected for c in citations),
+                contains_facts=all(fold(term) in fold(answer.text) for term in case.must_contain),
+            )
+        )
+    return results
 
 
 def render_markdown(retrieval: list[RetrievalMetrics], answers: AnswerMetrics | None) -> str:

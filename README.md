@@ -6,12 +6,16 @@
 
 [![CI](https://github.com/lucassantana2301-bot/rag-docs-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/lucassantana2301-bot/rag-docs-assistant/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/lucassantana2301-bot/rag-docs-assistant/actions/workflows/codeql.yml/badge.svg)](https://github.com/lucassantana2301-bot/rag-docs-assistant/actions/workflows/codeql.yml)
-![Python](https://img.shields.io/badge/Python-3.12_%7C_3.13-3776AB?logo=python&logoColor=white)
+[![Coverage](https://img.shields.io/endpoint?url=https://lucassantana2301-bot.github.io/rag-docs-assistant/badges/coverage.json)](https://lucassantana2301-bot.github.io/rag-docs-assistant/coverage/)
+[![Release](https://img.shields.io/github/v/release/lucassantana2301-bot/rag-docs-assistant?sort=semver)](https://github.com/lucassantana2301-bot/rag-docs-assistant/releases)
+![Python](https://img.shields.io/badge/Python-3.12_%7C_3.15-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.165-009688?logo=fastapi&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-FTS5_+_vetores-003B57?logo=sqlite&logoColor=white)
 ![uv](https://img.shields.io/badge/uv-ruff_·_mypy_strict-DE5FE9?logo=astral&logoColor=white)
 ![LLM](https://img.shields.io/badge/LLM-OpenAI_·_Anthropic_·_Ollama-412991)
 ![License](https://img.shields.io/badge/license-MIT-green)
+
+**[📊 Relatório de avaliação ao vivo](https://lucassantana2301-bot.github.io/rag-docs-assistant/)** · [Abrir no Codespaces](https://codespaces.new/lucassantana2301-bot/rag-docs-assistant?quickstart=1) · [Releases](https://github.com/lucassantana2301-bot/rag-docs-assistant/releases) · [Arquitetura](#arquitetura) · [Decisões](#decisões-técnicas)
 
 ![Interface com a resposta citada, as fontes e a tabela de trechos recuperados pela busca híbrida](docs/interface.png)
 
@@ -85,6 +89,17 @@ eval/golden.jsonl    # 38 perguntas de referência
 
 Pré-requisito: [uv](https://docs.astral.sh/uv/) (ou Docker).
 
+> **Sem instalar nada:** [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/lucassantana2301-bot/rag-docs-assistant?quickstart=1) abre o projeto com o corpus indexado e a interface rodando.
+
+Com a imagem publicada em cada release (SBOM e atestado de proveniência inclusos):
+
+```bash
+docker run -p 8000:8000 ghcr.io/lucassantana2301-bot/rag-docs-assistant:1
+gh attestation verify oci://ghcr.io/lucassantana2301-bot/rag-docs-assistant:1 --owner lucassantana2301-bot
+```
+
+A partir do código:
+
 ```bash
 uv sync
 uv run rag ingest corpus
@@ -155,7 +170,11 @@ Resultado com a configuração padrão (embedding local por hashing e respostas 
 - A pergunta que nenhum modo acerta é "Posso colar código no ChatGPT?": o documento fala em "ferramentas de IA generativa". É exatamente o caso que um embedding neural resolve. Com `RAG_EMBEDDING_PROVIDER=openai` ou `ollama`, a busca vetorial passa a pesar de verdade na fusão.
 - A resposta extrativa copia frases do documento: nunca inventa, mas não junta informações de dois trechos. O LLM fecha essa diferença, e o mesmo comando mede o ganho.
 
-O CI roda essa avaliação a cada commit e publica a tabela no resumo da execução.
+O CI roda essa avaliação a cada commit e publica a tabela no resumo da execução. A cada push na `main`, o [relatório navegável](https://lucassantana2301-bot.github.io/rag-docs-assistant/) mostra, pergunta por pergunta, os trechos recuperados (com a posição no BM25 e no vetor), a resposta, as citações e o motivo de cada falha:
+
+```bash
+uv run rag eval eval/golden.jsonl --html relatorio/index.html --json-out relatorio/eval.json
+```
 
 ## Decisões técnicas
 
@@ -179,7 +198,7 @@ O CI roda essa avaliação a cada commit e publica a tabela no resumo da execuç
 uv run ruff check . && uv run ruff format --check . && uv run mypy && uv run pytest --cov
 ```
 
-São 55 testes com 93% de cobertura: loaders (HTML com script e navegação, PDF com quebra de linha, arquivo corrompido), chunking, idempotência, injeção na busca, RRF, validação de citações, prompt injection, provedores com transporte HTTP simulado (retry, 401 sem retry, payload inesperado), API completa e os portões de qualidade da avaliação. O mypy roda em modo `strict` no código e nos testes.
+São 60 testes com 94% de cobertura: loaders (HTML com script e navegação, PDF com quebra de linha, arquivo corrompido), chunking, idempotência, injeção na busca, RRF, validação de citações, prompt injection, provedores com transporte HTTP simulado (retry, 401 sem retry, payload inesperado), API completa e os portões de qualidade da avaliação. O mypy roda em modo `strict` no código e nos testes.
 
 ## Limitações e próximos passos
 
@@ -187,6 +206,10 @@ São 55 testes com 93% de cobertura: loaders (HTML com script e navegação, PDF
 - Não há controle de acesso por documento: todos que acessam a API veem todos os documentos. Para uso real, o próximo passo é filtrar a busca pelo grupo do usuário (vindo do SSO).
 - Reranqueamento com cross-encoder e expansão de consulta melhorariam o MRR, ao custo de latência.
 - A resposta não é transmitida em streaming (SSE).
+
+## Contribuindo
+
+Veja o [guia de contribuição](CONTRIBUTING.md) (fluxo de branch, Conventional Commits e release), o [CHANGELOG](CHANGELOG.md) e a [política de segurança](SECURITY.md).
 
 ## Licença
 

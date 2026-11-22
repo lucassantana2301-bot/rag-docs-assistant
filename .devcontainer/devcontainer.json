@@ -1,0 +1,24 @@
+{
+  "name": "RAG Docs Assistant",
+  "image": "mcr.microsoft.com/devcontainers/python:3.13",
+  "postCreateCommand": "pipx install uv && uv sync && uv run rag ingest corpus",
+  "postAttachCommand": "uv run rag serve --host 0.0.0.0 --port 8000",
+  "forwardPorts": [
+    8000
+  ],
+  "portsAttributes": {
+    "8000": {
+      "label": "Interface e API",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "ms-python.mypy-type-checker"
+      ]
+    }
+  }
+}
