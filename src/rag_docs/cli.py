@@ -6,11 +6,13 @@ import argparse
 import json
 import sys
 from dataclasses import asdict
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .config import Settings
-from .evaluation import evaluate_answers, evaluate_retrieval, load_golden, render_markdown
+from .evaluation import evaluate_answers, evaluate_cases, evaluate_retrieval, load_golden, render_markdown
 from .models import RagError
+from .report import render_html
 from .service import RagService
 
 
@@ -36,6 +38,9 @@ def _parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--k", type=int, default=5)
     evaluate.add_argument("--answers", action="store_true", help="avalia também as respostas (chama o LLM)")
     evaluate.add_argument("--min-hit-rate", type=float, help="falha (código 3) se o hit rate híbrido ficar abaixo")
+    evaluate.add_argument("--html", type=Path, help="grava o relatório navegável (HTML) neste caminho")
+    evaluate.add_argument("--json-out", type=Path, help="grava o resultado detalhado por pergunta (JSON)")
+    evaluate.add_argument("--revision", help="commit avaliado, exibido no relatório")
 
     serve = sub.add_parser("serve", help="sobe a API e a interface web")
     serve.add_argument("--host", default="127.0.0.1")
@@ -115,8 +120,28 @@ def _run(args: argparse.Namespace, service: RagService) -> int:
         retrieval = [
             evaluate_retrieval(service, cases, mode=mode, k=args.k) for mode in ("lexical", "vector", "hybrid")
         ]
-        answers = evaluate_answers(service, cases) if args.answers else None
+        answers = evaluate_answers(service, cases) if args.answers or args.html else None
         print(render_markdown(retrieval, answers))
+        if args.html or args.json_out:
+            details = evaluate_cases(service, cases, k=args.k)
+            if args.json_out:
+                payload = {
+                    "retrieval": [asdict(m) for m in retrieval],
+                    "answers": asdict(answers) if answers else None,
+                    "cases": [asdict(c) | {"passed": c.passed} for c in details],
+                }
+                _write(args.json_out, json.dumps(payload, ensure_ascii=False, indent=2))
+            if args.html and answers:
+                html = render_html(
+                    retrieval,
+                    answers,
+                    details,
+                    generator=service.generator.name,
+                    generated_at=datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
+                    revision=args.revision,
+                    repository_url="https://github.com/lucassantana2301-bot/rag-docs-assistant",
+                )
+                _write(args.html, html)
         hybrid = retrieval[-1]
         if args.min_hit_rate is not None and hybrid.hit_rate < args.min_hit_rate:
             print(
@@ -126,6 +151,12 @@ def _run(args: argparse.Namespace, service: RagService) -> int:
             return 3
         return 0
     return 2
+
+
+def _write(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    print(f"gravado: {path}", file=sys.stderr)
 
 
 if __name__ == "__main__":
