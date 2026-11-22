@@ -1,0 +1,27 @@
+name: rag-docs-assistant
+
+services:
+  app:
+    build: .
+    ports:
+      - '127.0.0.1:8000:8000'
+    environment:
+      RAG_API_KEY: ${RAG_API_KEY:-}
+      RAG_EMBEDDING_PROVIDER: ${RAG_EMBEDDING_PROVIDER:-hashing}
+      RAG_LLM_PROVIDER: ${RAG_LLM_PROVIDER:-extractive}
+      RAG_LLM_MODEL: ${RAG_LLM_MODEL:-}
+      RAG_OPENAI_API_KEY: ${RAG_OPENAI_API_KEY:-}
+      RAG_ANTHROPIC_API_KEY: ${RAG_ANTHROPIC_API_KEY:-}
+      RAG_OLLAMA_BASE_URL: ${RAG_OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+    volumes:
+      - index:/data
+      # Para usar seus documentos, troque ./corpus pela pasta com os arquivos.
+      - ./corpus:/corpus:ro
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ['no-new-privileges:true']
+
+volumes:
+  index:
