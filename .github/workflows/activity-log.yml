@@ -1,0 +1,90 @@
+name: Activity log
+
+on:
+  schedule:
+    # 05:00, 09:00, 11:30, 14:40, 15:55, 19:30, 22:50 (America/Sao_Paulo)
+    - cron: "0 8 * * *"
+    - cron: "0 12 * * *"
+    - cron: "30 14 * * *"
+    - cron: "40 17 * * *"
+    - cron: "55 18 * * *"
+    - cron: "30 22 * * *"
+    - cron: "50 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: activity-log
+  cancel-in-progress: false
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MIN_COMMITS: "2"
+      MAX_COMMITS: "5"
+      # Chance (%) de commitar em cada horário: cada repo aparece em horários diferentes a cada dia
+      RUN_PERCENT: "15"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Decide
+        id: decide
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Execução manual nunca pula
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ $(( RANDOM % 100 )) -ge "$RUN_PERCENT" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Horário pulado"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate commits
+        if: steps.decide.outputs.skip == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # O e-mail precisa ser um e-mail verificado da conta para contar no gráfico
+          git config user.name "lucassantana2301-bot"
+          git config user.email "lucas.santana2301@gmail.com"
+
+          # Pasta com ponto: não é servida pelo Jekyll/GitHub Pages e não mexe no código
+          mkdir -p .activity
+          LOG=".activity/log.md"
+          [ -f "$LOG" ] || printf '# Activity log\n\n' > "$LOG"
+
+          COUNT=$(( MIN_COMMITS + (RANDOM % (MAX_COMMITS - MIN_COMMITS + 1)) ))
+          echo "Gerando $COUNT commit(s)"
+
+          for i in $(seq 1 "$COUNT"); do
+            TS=$(TZ=America/Sao_Paulo date '+%Y-%m-%d %H:%M:%S')
+            echo "- ${TS} · entry ${i}/${COUNT}" >> "$LOG"
+            git add "$LOG"
+            git commit -q -m "chore(activity): log ${TS} #${i}"
+          done
+
+      - name: Push
+        if: steps.decide.outputs.skip == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="${{ github.ref_name }}"
+          # Um único push por execução para não disparar vários rebuilds em hosts que observam a branch
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${BRANCH}"; then
+              exit 0
+            fi
+            echo "Push falhou (tentativa $attempt), fazendo rebase..."
+            git pull --rebase origin "$BRANCH"
+            sleep 5
+          done
+          echo "Push falhou após 3 tentativas" >&2
+          exit 1
