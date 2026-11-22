@@ -1,0 +1,2556 @@
+{
+  "retrieval": [
+    {
+      "mode": "lexical",
+      "k": 5,
+      "hit_rate": 0.9706,
+      "mrr": 0.898,
+      "cases": 34
+    },
+    {
+      "mode": "vector",
+      "k": 5,
+      "hit_rate": 0.9118,
+      "mrr": 0.8701,
+      "cases": 34
+    },
+    {
+      "mode": "hybrid",
+      "k": 5,
+      "hit_rate": 0.9706,
+      "mrr": 0.8662,
+      "cases": 34
+    }
+  ],
+  "answers": {
+    "cases": 38,
+    "faithful_citation_rate": 0.8529,
+    "contains_rate": 0.6471,
+    "correct_refusal_rate": 1.0
+  },
+  "cases": [
+    {
+      "question": "Quantos dias de férias posso vender?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-ferias.md"
+      ],
+      "must_contain": [
+        "10 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Abono pecuniário (venda de férias)",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Fracionamento",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Como solicitar",
+          "score": 0.031746,
+          "lexical_rank": 3,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Licenças",
+          "score": 0.029412,
+          "lexical_rank": 8,
+          "vector_rank": 8,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiros 90 dias",
+          "score": 0.028778,
+          "lexical_rank": 10,
+          "vector_rank": 9,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "É possível vender até 1/3 das férias, ou seja, até 10 dias. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Abono pecuniário (venda de férias)",
+          "excerpt": "É possível vender até 1/3 das férias, ou seja, até 10 dias. O pedido de abono deve ser feito até 15 dias antes do fim do período aquisitivo, pelo portal de RH. O valor é pago junto com as férias.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Em quantos períodos posso dividir minhas férias?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-ferias.md"
+      ],
+      "must_contain": [
+        "três períodos"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Direito e período aquisitivo",
+          "score": 0.032522,
+          "lexical_rank": 2,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Fracionamento",
+          "score": 0.032522,
+          "lexical_rank": 1,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Abono pecuniário (venda de férias)",
+          "score": 0.031498,
+          "lexical_rank": 4,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Trabalho de outro país",
+          "score": 0.029211,
+          "lexical_rank": 7,
+          "vector_rank": 10,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiros 90 dias",
+          "score": 0.014706,
+          "lexical_rank": null,
+          "vector_rank": 8,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Cada pessoa adquire o direito a 30 dias corridos de férias a cada 12 meses de trabalho (período aquisitivo). [1] As férias podem ser divididas em até três períodos, desde que um deles tenha pelo menos 14 dias corridos e os demais tenham pelo menos 5 dias corridos cada. [2]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Direito e período aquisitivo",
+          "excerpt": "Cada pessoa adquire o direito a 30 dias corridos de férias a cada 12 meses de trabalho (período aquisitivo). As férias precisam ser tiradas nos 12 meses seguintes (período concessivo). Férias vencidas e não tiradas dentro do período concessivo são pagas em dobro pela empresa, por isso o RH bloqueia a aprovação de escalas que deixem alguém com dois períodos acumulados.",
+          "expected": true
+        },
+        {
+          "number": 2,
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Fracionamento",
+          "excerpt": "As férias podem ser divididas em até três períodos, desde que um deles tenha pelo menos 14 dias corridos e os demais tenham pelo menos 5 dias corridos cada. Não é permitido iniciar férias nos dois dias que antecedem feriado ou o descanso semanal remunerado.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Com quanta antecedência preciso combinar as férias com o gestor?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-ferias.md"
+      ],
+      "must_contain": [
+        "45 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Como solicitar",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Abono pecuniário (venda de férias)",
+          "score": 0.032002,
+          "lexical_rank": 2,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Plantão e férias",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Dias presenciais",
+          "score": 0.030077,
+          "lexical_rank": 7,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.030077,
+          "lexical_rank": 6,
+          "vector_rank": 7,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Combine as datas com sua liderança com pelo menos 45 dias de antecedência. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Como solicitar",
+          "excerpt": "Combine as datas com sua liderança com pelo menos 45 dias de antecedência.\nRegistre a solicitação no portal de RH (menu Pessoas › Férias).\nA liderança aprova no portal e o RH confirma em até 5 dias úteis.\n\nO pagamento das férias, com o adicional de 1/3, é feito até 2 dias antes do início do descanso.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Estagiário tem direito a vender o recesso?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-ferias.md"
+      ],
+      "must_contain": [
+        "não pode ser vendido"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Recesso de estagiários",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias",
+          "score": 0.032002,
+          "lexical_rank": 2,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Direito e período aquisitivo",
+          "score": 0.030118,
+          "lexical_rank": 4,
+          "vector_rank": 9,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Comprovantes",
+          "score": 0.016129,
+          "lexical_rank": null,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Acesso a produção",
+          "score": 0.015625,
+          "lexical_rank": null,
+          "vector_rank": 4,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Estagiários têm direito a 30 dias de recesso remunerado a cada 12 meses de estágio, que podem ser divididos em até dois períodos. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Recesso de estagiários",
+          "excerpt": "Estagiários têm direito a 30 dias de recesso remunerado a cada 12 meses de estágio, que podem ser divididos em até dois períodos. O recesso não tem adicional de 1/3 nem pode ser vendido.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Qual o prazo para pedir reembolso de despesas?",
+      "answerable": true,
+      "expected_sources": [
+        "reembolso-de-despesas.md"
+      ],
+      "must_contain": [
+        "30 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Prazo para solicitar",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Cartão corporativo",
+          "score": 0.032002,
+          "lexical_rank": 2,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Para quem abre o pull request",
+          "score": 0.030077,
+          "lexical_rank": 6,
+          "vector_rank": 7,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.029412,
+          "lexical_rank": 8,
+          "vector_rank": 8,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "A solicitação de reembolso deve ser feita em até 30 dias corridos após a data da despesa, pelo app Corporate Expenses. [1] Quem tem cartão corporativo não pede reembolso: presta contas das despesas do cartão no mesmo app, também em até 30 dias. [3]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Prazo para solicitar",
+          "excerpt": "A solicitação de reembolso deve ser feita em até 30 dias corridos após a data da despesa, pelo app Corporate Expenses. Pedidos fora do prazo só são aceitos com aprovação do diretor da área.",
+          "expected": true
+        },
+        {
+          "number": 3,
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Cartão corporativo",
+          "excerpt": "Quem tem cartão corporativo não pede reembolso: presta contas das despesas do cartão no mesmo app, também em até 30 dias. Despesa pessoal no cartão corporativo é descontada em folha e pode levar ao cancelamento do cartão.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual o limite diário para refeições quando estou viajando a trabalho?",
+      "answerable": true,
+      "expected_sources": [
+        "reembolso-de-despesas.md"
+      ],
+      "must_contain": [
+        "R$ 120,00"
+      ],
+      "retrieved": [
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "score": 0.032266,
+          "lexical_rank": 1,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Trabalho de outro país",
+          "score": 0.032018,
+          "lexical_rank": 4,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Equipamentos",
+          "score": 0.031514,
+          "lexical_rank": 5,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.031025,
+          "lexical_rank": 3,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "score": 0.030835,
+          "lexical_rank": 2,
+          "vector_rank": 8,
+          "relevant": true
+        }
+      ],
+      "first_relevant_rank": 5,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Quanto a empresa paga por quilômetro se eu usar meu carro?",
+      "answerable": true,
+      "expected_sources": [
+        "reembolso-de-despesas.md"
+      ],
+      "must_contain": [
+        "1,10"
+      ],
+      "retrieved": [
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Bem-estar",
+          "score": 0.032266,
+          "lexical_rank": 3,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Trabalho remoto",
+          "score": 0.030077,
+          "lexical_rank": 6,
+          "vector_rank": 7,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Equipamentos",
+          "score": 0.02971,
+          "lexical_rank": 4,
+          "vector_rank": 11,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "score": 0.02967,
+          "lexical_rank": 5,
+          "vector_rank": 10,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.028589,
+          "lexical_rank": 1,
+          "vector_rank": 22,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 4,
+      "answer": "Sessões de terapia online com psicólogos parceiros, com 4 sessões por mês pagas pela empresa. [1] Quilometragem com carro próprio: R$ 1,10 por km rodado, com origem e destino informados. [4]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "beneficios.md",
+          "heading": "Benefícios › Bem-estar",
+          "excerpt": "Gympass (Wellhub) com subsídio da empresa a partir do plano básico.\nSessões de terapia online com psicólogos parceiros, com 4 sessões por mês pagas pela empresa.",
+          "expected": false
+        },
+        {
+          "number": 4,
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "excerpt": "Alimentação em viagem: até R$ 120,00 por dia, somando todas as refeições. Bebida alcoólica não é reembolsada.\nHospedagem: até R$ 450,00 por noite em capitais e R$ 320,00 nas demais cidades. Reservas devem ser feitas pela agência de viagens parceira sempre que possível.\nTransporte por aplicativo: categoria padrão (não premium). Deslocamento casa-escritório no dia a dia não é…",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Em que dia da semana o reembolso cai na conta?",
+      "answerable": true,
+      "expected_sources": [
+        "reembolso-de-despesas.md"
+      ],
+      "must_contain": [
+        "quinta-feira"
+      ],
+      "retrieved": [
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "score": 0.032018,
+          "lexical_rank": 4,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Aprovação e pagamento",
+          "score": 0.031514,
+          "lexical_rank": 2,
+          "vector_rank": 5,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "score": 0.031319,
+          "lexical_rank": 1,
+          "vector_rank": 7,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Prazo para solicitar",
+          "score": 0.031025,
+          "lexical_rank": 6,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiro dia",
+          "score": 0.030159,
+          "lexical_rank": 3,
+          "vector_rank": 10,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Deslocamento casa-escritório no dia a dia não é reembolsável. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "excerpt": "Alimentação em viagem: até R$ 120,00 por dia, somando todas as refeições. Bebida alcoólica não é reembolsada.\nHospedagem: até R$ 450,00 por noite em capitais e R$ 320,00 nas demais cidades. Reservas devem ser feitas pela agência de viagens parceira sempre que possível.\nTransporte por aplicativo: categoria padrão (não premium). Deslocamento casa-escritório no dia a dia não é…",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Quem aciona o incident commander num SEV1?",
+      "answerable": true,
+      "expected_sources": [
+        "runbook-de-incidentes.md"
+      ],
+      "must_contain": [
+        "plantão"
+      ],
+      "retrieved": [
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Janelas de deploy",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "score": 0.031498,
+          "lexical_rank": 4,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.030798,
+          "lexical_rank": 3,
+          "vector_rank": 7,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.015152,
+          "lexical_rank": null,
+          "vector_rank": 6,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Em SEV1 e SEV2, quem está de plantão no momento aciona o IC da escala pelo PagerDuty (serviço \"incident-commander\"). [1] Correções de incidente SEV1 ou SEV2 podem ser feitas fora da janela com aprovação do incident commander. [2]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "excerpt": "Incident commander (IC): coordena a resposta, decide prioridades e é a única pessoa que declara o incidente resolvido. Em SEV1 e SEV2, quem está de plantão no momento aciona o IC da escala pelo PagerDuty (serviço \"incident-commander\").\nResponsável técnico: investiga e aplica a correção. Pode ser o próprio plantonista.\nComunicação: atualiza a status page e o canal #incidentes a cada 30 minutos em…",
+          "expected": true
+        },
+        {
+          "number": 2,
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Janelas de deploy",
+          "excerpt": "Deploys em produção acontecem de segunda a quinta-feira, das 10h às 17h. Não há deploy em produção na sexta-feira, em véspera de feriado nem nos dias de pico de pagamentos (dia 5 e dia 20 de cada mês). Correções de incidente SEV1 ou SEV2 podem ser feitas fora da janela com aprovação do incident commander.",
+          "expected": false
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual o prazo para escrever o postmortem de um incidente?",
+      "answerable": true,
+      "expected_sources": [
+        "runbook-de-incidentes.md"
+      ],
+      "must_contain": [
+        "5 dias úteis"
+      ],
+      "retrieved": [
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Fluxo de resposta",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "score": 0.031025,
+          "lexical_rank": 6,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Prazo para solicitar",
+          "score": 0.030835,
+          "lexical_rank": 2,
+          "vector_rank": 8,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Janelas de deploy",
+          "score": 0.030118,
+          "lexical_rank": 4,
+          "vector_rank": 9,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "O postmortem precisa ter linha do tempo, impacto em clientes e valores, causa raiz e ações com dono e prazo. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "excerpt": "Todo SEV1 e SEV2 tem postmortem sem culpados (blameless), escrito em até 5 dias úteis após o encerramento e revisado na reunião semanal de confiabilidade de quarta-feira. O postmortem precisa ter linha do tempo, impacto em clientes e valores, causa raiz e ações com dono e prazo.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Com que frequência atualizar a status page durante um incidente grave?",
+      "answerable": true,
+      "expected_sources": [
+        "runbook-de-incidentes.md"
+      ],
+      "must_contain": [
+        "30 minutos"
+      ],
+      "retrieved": [
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Fluxo de resposta",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Plantão e férias",
+          "score": 0.031281,
+          "lexical_rank": 2,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.03125,
+          "lexical_rank": 4,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Como reportar um incidente de segurança",
+          "score": 0.029851,
+          "lexical_rank": 7,
+          "vector_rank": 7,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Comunicação: atualiza a status page e o canal #incidentes a cada 30 minutos em SEV1 e a cada hora em SEV2. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "excerpt": "Incident commander (IC): coordena a resposta, decide prioridades e é a única pessoa que declara o incidente resolvido. Em SEV1 e SEV2, quem está de plantão no momento aciona o IC da escala pelo PagerDuty (serviço \"incident-commander\").\nResponsável técnico: investiga e aplica a correção. Pode ser o próprio plantonista.\nComunicação: atualiza a status page e o canal #incidentes a cada 30 minutos em…",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Em quanto tempo o plantonista precisa responder um alerta?",
+      "answerable": true,
+      "expected_sources": [
+        "runbook-de-incidentes.md"
+      ],
+      "must_contain": [
+        "5 minutos"
+      ],
+      "retrieved": [
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Plantão",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Plantão e férias",
+          "score": 0.031514,
+          "lexical_rank": 5,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "score": 0.031025,
+          "lexical_rank": 3,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "score": 0.031025,
+          "lexical_rank": 6,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Horário e disponibilidade",
+          "score": 0.03101,
+          "lexical_rank": 4,
+          "vector_rank": 5,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "O plantonista deve responder ao alerta em até 5 minutos. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Plantão",
+          "excerpt": "A escala de plantão é semanal, começa na segunda-feira às 10h e é gerenciada no PagerDuty. O plantonista deve responder ao alerta em até 5 minutos. Quem faz plantão recebe adicional de sobreaviso conforme o acordo coletivo.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Posso fazer deploy na sexta-feira?",
+      "answerable": true,
+      "expected_sources": [
+        "guia-de-deploy.md"
+      ],
+      "must_contain": [
+        "sexta-feira"
+      ],
+      "retrieved": [
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Janelas de deploy",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "score": 0.031514,
+          "lexical_rank": 2,
+          "vector_rank": 5,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Pipeline",
+          "score": 0.031258,
+          "lexical_rank": 5,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Ferramentas",
+          "score": 0.029236,
+          "lexical_rank": 6,
+          "vector_rank": 11,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Não há deploy em produção na sexta-feira, em véspera de feriado nem nos dias de pico de pagamentos (dia 5 e dia 20 de cada mês). [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Janelas de deploy",
+          "excerpt": "Deploys em produção acontecem de segunda a quinta-feira, das 10h às 17h. Não há deploy em produção na sexta-feira, em véspera de feriado nem nos dias de pico de pagamentos (dia 5 e dia 20 de cada mês). Correções de incidente SEV1 ou SEV2 podem ser feitas fora da janela com aprovação do incident commander.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Como funciona o canary dos serviços de pagamento?",
+      "answerable": true,
+      "expected_sources": [
+        "guia-de-deploy.md"
+      ],
+      "must_contain": [
+        "5%"
+      ],
+      "retrieved": [
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Serviços",
+          "score": 0.032266,
+          "lexical_rank": 3,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "score": 0.031545,
+          "lexical_rank": 1,
+          "vector_rank": 6,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Estados do pagamento",
+          "score": 0.031258,
+          "lexical_rank": 5,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiro dia",
+          "score": 0.030118,
+          "lexical_rank": 4,
+          "vector_rank": 9,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 3,
+      "answer": "Serviços do domínio de pagamentos usam canary: 5% do tráfego por 15 minutos, depois 25%, 50% e 100%. [3]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 3,
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "excerpt": "Serviços do domínio de pagamentos usam canary: 5% do tráfego por 15 minutos, depois 25%, 50% e 100%. O Argo Rollouts interrompe e reverte sozinho se a taxa de erro passar de 1% ou a latência p99 subir mais de 20% em relação à versão anterior.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Quanto tempo leva para reverter uma versão em produção?",
+      "answerable": true,
+      "expected_sources": [
+        "guia-de-deploy.md"
+      ],
+      "must_contain": [
+        "3 minutos"
+      ],
+      "retrieved": [
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Rollback",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "score": 0.032002,
+          "lexical_rank": 2,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes",
+          "score": 0.03031,
+          "lexical_rank": 7,
+          "vector_rank": 5,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Acesso a produção",
+          "score": 0.029857,
+          "lexical_rank": 6,
+          "vector_rank": 8,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "O Argo Rollouts interrompe e reverte sozinho se a taxa de erro passar de 1% ou a latência p99 subir mais de 20% em relação à versão anterior. [3]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 3,
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "excerpt": "Serviços do domínio de pagamentos usam canary: 5% do tráfego por 15 minutos, depois 25%, 50% e 100%. O Argo Rollouts interrompe e reverte sozinho se a taxa de erro passar de 1% ou a latência p99 subir mais de 20% em relação à versão anterior.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Quantas aprovações precisa um PR que mexe em regras de antifraude?",
+      "answerable": true,
+      "expected_sources": [
+        "code-review.md",
+        "guia-de-deploy.md"
+      ],
+      "must_contain": [
+        "duas aprovações"
+      ],
+      "retrieved": [
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Aprovação de mudanças",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Merge",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.031025,
+          "lexical_rank": 6,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Plantão e férias",
+          "score": 0.030331,
+          "lexical_rank": 4,
+          "vector_rank": 8,
+          "relevant": false
+        },
+        {
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Para quem abre o pull request",
+          "score": 0.030159,
+          "lexical_rank": 3,
+          "vector_rank": 10,
+          "relevant": true
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Mudanças em infra/, em regras de antifraude ou em cálculo de tarifas exigem duas aprovações, sendo uma de pessoa sênior. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Aprovação de mudanças",
+          "excerpt": "Pull requests precisam de uma aprovação de outra pessoa do time. Mudanças em infra/, em regras de antifraude ou em cálculo de tarifas exigem duas aprovações, sendo uma de pessoa sênior.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Posso usar SMS como segundo fator de autenticação?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-seguranca-da-informacao.md"
+      ],
+      "must_contain": [
+        "SMS"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Contas e senhas",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "score": 0.031514,
+          "lexical_rank": 2,
+          "vector_rank": 5,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Como reportar um incidente de segurança",
+          "score": 0.016129,
+          "lexical_rank": null,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Dados de clientes",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Educação",
+          "score": 0.015625,
+          "lexical_rank": null,
+          "vector_rank": 4,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "SMS não é aceito como segundo fator. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Contas e senhas",
+          "excerpt": "Todas as ferramentas corporativas usam login único (SSO) pelo Okta. A autenticação em dois fatores (MFA) é obrigatória, com chave física (YubiKey) para quem tem acesso a produção e app autenticador para os demais. SMS não é aceito como segundo fator.\n\nSenhas precisam ter no mínimo 14 caracteres e ficam no gerenciador de senhas corporativo (1Password). É proibido compartilhar senhas por chat ou…",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Por quanto tempo vale o acesso temporário ao ambiente de produção?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-seguranca-da-informacao.md"
+      ],
+      "must_contain": [
+        "4 horas"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Acesso a produção",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Dados de clientes",
+          "score": 0.031281,
+          "lexical_rank": 2,
+          "vector_rank": 6,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Contas e senhas",
+          "score": 0.03101,
+          "lexical_rank": 5,
+          "vector_rank": 4,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "score": 0.030798,
+          "lexical_rank": 3,
+          "vector_rank": 7,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.03031,
+          "lexical_rank": 7,
+          "vector_rank": 5,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Ninguém tem acesso permanente a produção. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Acesso a produção",
+          "excerpt": "Ninguém tem acesso permanente a produção. O acesso é pedido pelo Teleport com justificativa, aprovado por outra pessoa do time e expira em 4 horas. Todas as sessões são gravadas e auditadas mensalmente pelo time de Segurança.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Perdi meu notebook, em quanto tempo tenho que avisar?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-seguranca-da-informacao.md"
+      ],
+      "must_contain": [
+        "2 horas"
+      ],
+      "retrieved": [
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiro dia",
+          "score": 0.031754,
+          "lexical_rank": 2,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Como reportar um incidente de segurança",
+          "score": 0.031319,
+          "lexical_rank": 1,
+          "vector_rank": 7,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Fluxo de resposta",
+          "score": 0.031258,
+          "lexical_rank": 5,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "score": 0.030777,
+          "lexical_rank": 4,
+          "vector_rank": 6,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 3,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Posso colar código da empresa no ChatGPT?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-seguranca-da-informacao.md"
+      ],
+      "must_contain": [
+        "aprovadas"
+      ],
+      "retrieved": [
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Bem-estar",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Feature flags",
+          "score": 0.031514,
+          "lexical_rank": 5,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Rollback",
+          "score": 0.031025,
+          "lexical_rank": 6,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Equipamentos",
+          "score": 0.031025,
+          "lexical_rank": 3,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Ferramentas",
+          "score": 0.030835,
+          "lexical_rank": 2,
+          "vector_rank": 8,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": null,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Qual a meta de latência da API de pagamentos?",
+      "answerable": true,
+      "expected_sources": [
+        "arquitetura-de-pagamentos.md"
+      ],
+      "must_contain": [
+        "300 ms"
+      ],
+      "retrieved": [
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "score": 0.031778,
+          "lexical_rank": 1,
+          "vector_rank": 5,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Outbox",
+          "score": 0.031754,
+          "lexical_rank": 4,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos",
+          "score": 0.031319,
+          "lexical_rank": 7,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "score": 0.031054,
+          "lexical_rank": 2,
+          "vector_rank": 7,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "score": 0.030579,
+          "lexical_rank": 3,
+          "vector_rank": 8,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "A meta (SLO) da payments-api é responder em até 300 ms no p99 e ter 99,95% de disponibilidade no mês. [1] SEV1 — Pagamentos fora do ar, vazamento de dados ou perda financeira em andamento — imediato [5]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "excerpt": "A meta (SLO) da payments-api é responder em até 300 ms no p99 e ter 99,95% de disponibilidade no mês. O limite padrão é de 100 requisições por segundo por cliente; limites maiores são negociados pelo time comercial.",
+          "expected": true
+        },
+        {
+          "number": 5,
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "excerpt": "| Severidade | Critério | Tempo para acionar |\n| --- | --- | --- |\n| SEV1 | Pagamentos fora do ar, vazamento de dados ou perda financeira em andamento | imediato |\n| SEV2 | Funcionalidade importante degradada para muitos clientes (ex.: Pix com latência acima de 5 s) | até 15 minutos |\n| SEV3 | Problema com contorno ou que afeta poucos clientes | horário comercial |\n| SEV4 | Problema estético ou…",
+          "expected": false
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Como o sistema evita cobrar o mesmo pagamento duas vezes?",
+      "answerable": true,
+      "expected_sources": [
+        "arquitetura-de-pagamentos.md"
+      ],
+      "must_contain": [
+        "Idempotency-Key"
+      ],
+      "retrieved": [
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Outbox",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Estados do pagamento",
+          "score": 0.031258,
+          "lexical_rank": 5,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Cartão corporativo",
+          "score": 0.02971,
+          "lexical_rank": 4,
+          "vector_rank": 11,
+          "relevant": false
+        },
+        {
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Merge",
+          "score": 0.029644,
+          "lexical_rank": 6,
+          "vector_rank": 9,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Visão geral dos serviços que processam pagamentos na Nimbus Pay e das decisões de projeto que garantem que nenhum pagamento seja cobrado duas vezes. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos",
+          "excerpt": "Visão geral dos serviços que processam pagamentos na Nimbus Pay e das decisões de projeto que garantem que nenhum pagamento seja cobrado duas vezes.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Por que usamos o padrão outbox?",
+      "answerable": true,
+      "expected_sources": [
+        "arquitetura-de-pagamentos.md"
+      ],
+      "must_contain": [
+        "mesma transação"
+      ],
+      "retrieved": [
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Outbox",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "score": 0.030366,
+          "lexical_rank": 3,
+          "vector_rank": 9,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Serviços",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "score": 0.015625,
+          "lexical_rank": null,
+          "vector_rank": 4,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "A payments-api grava o pagamento e o evento a publicar na mesma transação do banco (padrão transactional outbox). [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Outbox",
+          "excerpt": "A payments-api grava o pagamento e o evento a publicar na mesma transação do banco (padrão transactional outbox). Um processo separado publica os eventos pendentes no Kafka. Isso evita o caso em que o pagamento é salvo mas o evento se perde.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Quais dias da semana o time precisa ir ao escritório?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-trabalho-hibrido.html"
+      ],
+      "must_contain": [
+        "terças"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Dias presenciais",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiro dia",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "score": 0.031498,
+          "lexical_rank": 3,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiros 90 dias",
+          "score": 0.030536,
+          "lexical_rank": 5,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.030118,
+          "lexical_rank": 4,
+          "vector_rank": 9,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Times no modelo híbrido vão ao escritório duas vezes por semana, às terças e quintas-feiras. [1] Todo SEV1 e SEV2 tem postmortem sem culpados (blameless), escrito em até 5 dias úteis após o encerramento e revisado na reunião semanal de confiabilidade de quarta-feira. [5]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Dias presenciais",
+          "excerpt": "Times no modelo híbrido vão ao escritório duas vezes por semana, às terças e quintas-feiras. Cada time pode trocar um desses dias, desde que o combinado fique registrado no Notion do time.\n\nO escritório fica aberto das 8h às 20h. Mesas são reservadas pelo app Officely com até 7 dias de antecedência.",
+          "expected": true
+        },
+        {
+          "number": 5,
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "excerpt": "Todo SEV1 e SEV2 tem postmortem sem culpados (blameless), escrito em até 5 dias úteis após o encerramento e revisado na reunião semanal de confiabilidade de quarta-feira. O postmortem precisa ter linha do tempo, impacto em clientes e valores, causa raiz e ações com dono e prazo.",
+          "expected": false
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Posso trabalhar de outro país por algumas semanas?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-trabalho-hibrido.html"
+      ],
+      "must_contain": [
+        "30 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Trabalho de outro país",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiro dia",
+          "score": 0.03101,
+          "lexical_rank": 4,
+          "vector_rank": 5,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Serviços",
+          "score": 0.028205,
+          "lexical_rank": 5,
+          "vector_rank": 18,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Idempotência",
+          "score": 0.015873,
+          "lexical_rank": 3,
+          "vector_rank": null,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Qual é o horário central para marcar reuniões?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-trabalho-hibrido.html"
+      ],
+      "must_contain": [
+        "10h às 16h"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Horário e disponibilidade",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "score": 0.031054,
+          "lexical_rank": 2,
+          "vector_rank": 7,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Serviços",
+          "score": 0.030777,
+          "lexical_rank": 4,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.030159,
+          "lexical_rank": 3,
+          "vector_rank": 10,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-seguranca-da-informacao.md",
+          "heading": "Política de segurança da informação › Dados de clientes",
+          "score": 0.016129,
+          "lexical_rank": null,
+          "vector_rank": 2,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "O horário central de colaboração é das 10h às 16h (horário de Brasília): reuniões devem ficar nessa faixa. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Horário e disponibilidade",
+          "excerpt": "O horário central de colaboração é das 10h às 16h (horário de Brasília): reuniões devem ficar nessa faixa.\nFora do horário central, ninguém é obrigado a responder mensagens, exceto quem está de plantão.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual a antecedência mínima para comprar passagem de voo nacional?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-viagens.pdf"
+      ],
+      "must_contain": [
+        "14 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.031754,
+          "lexical_rank": 4,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Como solicitar",
+          "score": 0.031498,
+          "lexical_rank": 3,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Dias presenciais",
+          "score": 0.030415,
+          "lexical_rank": 2,
+          "vector_rank": 10,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Estratégia de rollout",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Passagens aéreas As passagens são compradas pela agência parceira em classe econômica, com antecedência mínima de 14 dias para voos nacionais. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "excerpt": "Política de viagens corporativas Esta política define como viagens a trabalho são aprovadas, compradas e prestadas contas na Nimbus Pay. Aprovação Toda viagem precisa de aprovação da liderança direta no portal de viagens antes da compra. Viagens internacionais exigem também aprovação do diretor da área e devem ser solicitadas com pelo menos 30 dias de antecedência. Passagens aéreas As passagens…",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual o valor da diária em viagem internacional?",
+      "answerable": true,
+      "expected_sources": [
+        "politica-de-viagens.pdf"
+      ],
+      "must_contain": [
+        "US$ 70"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Alimentação",
+          "score": 0.031281,
+          "lexical_rank": 2,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.031281,
+          "lexical_rank": 6,
+          "vector_rank": 2,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Abono pecuniário (venda de férias)",
+          "score": 0.030331,
+          "lexical_rank": 4,
+          "vector_rank": 8,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "score": 0.03031,
+          "lexical_rank": 5,
+          "vector_rank": 7,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Diárias Viagens internacionais têm diária de US$ 70 para alimentação, paga antecipadamente, sem necessidade de comprovantes. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "excerpt": "Seguro e emergências Viagens internacionais têm seguro-viagem contratado pela empresa, com cobertura médica mínima de 60 mil euros. Em emergências durante a viagem, ligue para a central da agência parceira, disponível 24 horas. Diárias Viagens internacionais têm diária de US$ 70 para alimentação, paga antecipadamente, sem necessidade de comprovantes. Em viagens nacionais vale o limite de…",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "A empresa reembolsa a prova de certificação AWS?",
+      "answerable": true,
+      "expected_sources": [
+        "beneficios.md"
+      ],
+      "must_contain": [
+        "primeira tentativa"
+      ],
+      "retrieved": [
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Educação",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Bem-estar",
+          "score": 0.030835,
+          "lexical_rank": 2,
+          "vector_rank": 8,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.030777,
+          "lexical_rank": 6,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Trabalho remoto",
+          "score": 0.029911,
+          "lexical_rank": 4,
+          "vector_rank": 10,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.029851,
+          "lexical_rank": 7,
+          "vector_rank": 7,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Certificações de nuvem (AWS, Azure, GCP) têm a taxa de prova reembolsada integralmente na primeira tentativa. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "beneficios.md",
+          "heading": "Benefícios › Educação",
+          "excerpt": "Auxílio de até R$ 3.000,00 por ano para cursos, livros e certificações relacionados à função, com aprovação prévia da liderança. Certificações de nuvem (AWS, Azure, GCP) têm a taxa de prova reembolsada integralmente na primeira tentativa.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual o valor do vale alimentação?",
+      "answerable": true,
+      "expected_sources": [
+        "beneficios.md"
+      ],
+      "must_contain": [
+        "1.200,00"
+      ],
+      "retrieved": [
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Alimentação",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Limites por categoria",
+          "score": 0.029236,
+          "lexical_rank": 6,
+          "vector_rank": 11,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Comprovantes",
+          "score": 0.028125,
+          "lexical_rank": 4,
+          "vector_rank": 20,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Serviços",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Em viagens nacionais vale o limite de alimentação da política de reembolso de despesas. [2]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 2,
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "excerpt": "Seguro e emergências Viagens internacionais têm seguro-viagem contratado pela empresa, com cobertura médica mínima de 60 mil euros. Em emergências durante a viagem, ligue para a central da agência parceira, disponível 24 horas. Diárias Viagens internacionais têm diária de US$ 70 para alimentação, paga antecipadamente, sem necessidade de comprovantes. Em viagens nacionais vale o limite de…",
+          "expected": false
+        }
+      ],
+      "cites_expected": false,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Quanto tempo dura a licença-paternidade?",
+      "answerable": true,
+      "expected_sources": [
+        "beneficios.md"
+      ],
+      "must_contain": [
+        "40 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Licenças",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "score": 0.031746,
+          "lexical_rank": 3,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Limites e tempo de resposta",
+          "score": 0.030769,
+          "lexical_rank": 5,
+          "vector_rank": 5,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Fluxo de resposta",
+          "score": 0.029139,
+          "lexical_rank": 4,
+          "vector_rank": 14,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Licença-maternidade de 180 dias e licença-paternidade de 40 dias, ambas também para adoção. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "beneficios.md",
+          "heading": "Benefícios › Licenças",
+          "excerpt": "Licença-maternidade de 180 dias e licença-paternidade de 40 dias, ambas também para adoção.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual o tamanho ideal de um pull request?",
+      "answerable": true,
+      "expected_sources": [
+        "code-review.md"
+      ],
+      "must_contain": [
+        "400 linhas"
+      ],
+      "retrieved": [
+        {
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Para quem abre o pull request",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Aprovação de mudanças",
+          "score": 0.032002,
+          "lexical_rank": 3,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "score": 0.031754,
+          "lexical_rank": 2,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Comprovantes",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "arquitetura-de-pagamentos.md",
+          "heading": "Arquitetura do processamento de pagamentos › Idempotência",
+          "score": 0.015385,
+          "lexical_rank": null,
+          "vector_rank": 5,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "Pull requests pequenos: o ideal é até 400 linhas alteradas. [1]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Para quem abre o pull request",
+          "excerpt": "Pull requests pequenos: o ideal é até 400 linhas alteradas. PR grande demais deve ser dividido.\nA descrição explica o porquê da mudança, como foi testada e o link para a tarefa.\nO pipeline precisa estar verde antes de pedir revisão.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "O que preciso fazer na primeira semana como engenheiro novo?",
+      "answerable": true,
+      "expected_sources": [
+        "onboarding-engenharia.md"
+      ],
+      "must_contain": [
+        "deploy"
+      ],
+      "retrieved": [
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": true
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Educação",
+          "score": 0.031281,
+          "lexical_rank": 2,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "code-review.md",
+          "heading": "Boas práticas de code review › Para quem revisa",
+          "score": 0.02971,
+          "lexical_rank": 4,
+          "vector_rank": 11,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Dias presenciais",
+          "score": 0.028373,
+          "lexical_rank": 3,
+          "vector_rank": 20,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia",
+          "score": 0.016129,
+          "lexical_rank": null,
+          "vector_rank": 2,
+          "relevant": true
+        }
+      ],
+      "first_relevant_rank": 1,
+      "answer": "O objetivo da primeira semana é fazer um primeiro deploy em produção: uma mudança pequena, escolhida pelo seu time, passando por todo o fluxo de pull request, revisão e pipeline. [1] Este guia cobre suas primeiras semanas no time de engenharia da Nimbus Pay. [5]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeira semana",
+          "excerpt": "Configure o ambiente de desenvolvimento seguindo o README do repositório platform-dev-env, que instala as ferramentas com um único script. Faça o curso obrigatório de segurança e LGPD na plataforma de treinamentos (cerca de 2 horas) até o quinto dia útil.\n\nO objetivo da primeira semana é fazer um primeiro deploy em produção: uma mudança pequena, escolhida pelo seu time, passando por todo o fluxo…",
+          "expected": true
+        },
+        {
+          "number": 5,
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia",
+          "excerpt": "Bem-vinda, bem-vindo! Este guia cobre suas primeiras semanas no time de engenharia da Nimbus Pay.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Quando entro na escala de plantão depois de contratado?",
+      "answerable": true,
+      "expected_sources": [
+        "onboarding-engenharia.md"
+      ],
+      "must_contain": [
+        "90 dias"
+      ],
+      "retrieved": [
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Plantão e férias",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Plantão",
+          "score": 0.032258,
+          "lexical_rank": 2,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiros 90 dias",
+          "score": 0.031746,
+          "lexical_rank": 3,
+          "vector_rank": 3,
+          "relevant": true
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Papéis",
+          "score": 0.03125,
+          "lexical_rank": 4,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Saúde",
+          "score": 0.03009,
+          "lexical_rank": 8,
+          "vector_rank": 5,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": 3,
+      "answer": "Quem participa da escala de plantão precisa encontrar substituto e atualizar a escala no PagerDuty antes de a solicitação ser aprovada. [1] A partir daí você entra na escala de plantão normal. [3]",
+      "grounded": true,
+      "citations": [
+        {
+          "number": 1,
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Plantão e férias",
+          "excerpt": "Quem participa da escala de plantão precisa encontrar substituto e atualizar a escala no PagerDuty antes de a solicitação ser aprovada. A liderança não aprova férias com o plantão descoberto.",
+          "expected": false
+        },
+        {
+          "number": 3,
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiros 90 dias",
+          "excerpt": "Ao fim de 90 dias acontece a conversa de fim de experiência com a liderança, com feedback do buddy e do time. A partir daí você entra na escala de plantão normal.",
+          "expected": true
+        }
+      ],
+      "cites_expected": true,
+      "contains_facts": false,
+      "passed": false
+    },
+    {
+      "question": "Qual é a política de stock options da empresa?",
+      "answerable": false,
+      "expected_sources": [],
+      "must_contain": [],
+      "retrieved": [
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Equipamentos",
+          "score": 0.032522,
+          "lexical_rank": 1,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias",
+          "score": 0.031319,
+          "lexical_rank": 7,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Bem-estar",
+          "score": 0.031281,
+          "lexical_rank": 2,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.031258,
+          "lexical_rank": 5,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido",
+          "score": 0.03009,
+          "lexical_rank": 8,
+          "vector_rank": 5,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": null,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Quantos funcionários a empresa tem no Japão?",
+      "answerable": false,
+      "expected_sources": [],
+      "must_contain": [],
+      "retrieved": [
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Bem-estar",
+          "score": 0.032787,
+          "lexical_rank": 1,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-trabalho-hibrido.html",
+          "heading": "Política de trabalho híbrido › Equipamentos",
+          "score": 0.031514,
+          "lexical_rank": 2,
+          "vector_rank": 5,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Trabalho remoto",
+          "score": 0.031025,
+          "lexical_rank": 3,
+          "vector_rank": 6,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-ferias.md",
+          "heading": "Política de férias › Direito e período aquisitivo",
+          "score": 0.029324,
+          "lexical_rank": 4,
+          "vector_rank": 13,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.028898,
+          "lexical_rank": 5,
+          "vector_rank": 14,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": null,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Qual o salário inicial de um engenheiro júnior?",
+      "answerable": false,
+      "expected_sources": [],
+      "must_contain": [],
+      "retrieved": [
+        {
+          "source": "reembolso-de-despesas.md",
+          "heading": "Reembolso de despesas › Aprovação e pagamento",
+          "score": 0.030886,
+          "lexical_rank": 1,
+          "vector_rank": 9,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia",
+          "score": 0.016393,
+          "lexical_rank": null,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiro dia",
+          "score": 0.016129,
+          "lexical_rank": null,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "onboarding-engenharia.md",
+          "heading": "Onboarding de engenharia › Primeiros 90 dias",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Alimentação",
+          "score": 0.015625,
+          "lexical_rank": null,
+          "vector_rank": 4,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": null,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": true,
+      "passed": true
+    },
+    {
+      "question": "Como configuro o cluster Kubernetes de machine learning?",
+      "answerable": false,
+      "expected_sources": [],
+      "must_contain": [],
+      "retrieved": [
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Severidades",
+          "score": 0.016393,
+          "lexical_rank": null,
+          "vector_rank": 1,
+          "relevant": false
+        },
+        {
+          "source": "guia-de-deploy.md",
+          "heading": "Guia de deploy › Pipeline",
+          "score": 0.016129,
+          "lexical_rank": null,
+          "vector_rank": 2,
+          "relevant": false
+        },
+        {
+          "source": "politica-de-viagens.pdf",
+          "heading": "",
+          "score": 0.015873,
+          "lexical_rank": null,
+          "vector_rank": 3,
+          "relevant": false
+        },
+        {
+          "source": "runbook-de-incidentes.md",
+          "heading": "Runbook de gestão de incidentes › Postmortem",
+          "score": 0.015625,
+          "lexical_rank": null,
+          "vector_rank": 4,
+          "relevant": false
+        },
+        {
+          "source": "beneficios.md",
+          "heading": "Benefícios › Alimentação",
+          "score": 0.015385,
+          "lexical_rank": null,
+          "vector_rank": 5,
+          "relevant": false
+        }
+      ],
+      "first_relevant_rank": null,
+      "answer": "Não encontrei essa informação nos documentos indexados.",
+      "grounded": false,
+      "citations": [],
+      "cites_expected": false,
+      "contains_facts": true,
+      "passed": true
+    }
+  ]
+}

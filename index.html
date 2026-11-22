@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<title>RAG Docs Assistant · relatório de avaliação</title>
+<style>
+:root { color-scheme: light dark; --bg:#f7f7f8; --card:#fff; --ink:#1f2328; --muted:#59636e; --line:#d1d9e0;
+  --ok:#1a7f37; --ok-bg:#dafbe1; --bad:#cf222e; --bad-bg:#ffebe9; --accent:#6e40c9; --chip:#eef1f4; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#9198a1;
+  --line:#30363d; --ok:#3fb950; --ok-bg:#12261e; --bad:#f85149; --bad-bg:#2d1214; --accent:#a371f7; --chip:#21262d; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:1040px; margin:0 auto; padding:32px 20px 64px; }
+h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.01em; }
+h2 { font-size:18px; margin:36px 0 12px; }
+p.lead { color:var(--muted); margin:0 0 20px; }
+a { color:var(--accent); }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+.kpi { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+.kpi span { display:block; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+.kpi strong { font-size:26px; font-variant-numeric:tabular-nums; }
+table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);
+  border-radius:12px; overflow:hidden; }
+th, td { text-align:left; padding:10px 14px; border-bottom:1px solid var(--line); }
+th { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+td.num { font-variant-numeric:tabular-nums; }
+tr:last-child td { border-bottom:0; }
+.toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 14px; }
+.toolbar button { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px;
+  padding:6px 14px; font:inherit; font-size:13px; cursor:pointer; }
+.toolbar button[aria-pressed="true"] { border-color:var(--accent); color:var(--accent); font-weight:600; }
+.toolbar input { flex:1; min-width:200px; border:1px solid var(--line); background:var(--card); color:var(--ink);
+  border-radius:8px; padding:7px 12px; font:inherit; }
+details { background:var(--card); border:1px solid var(--line); border-radius:12px; margin:0 0 10px; }
+summary { cursor:pointer; padding:14px 16px; display:flex; gap:12px; align-items:baseline; list-style:none; }
+summary::-webkit-details-marker { display:none; }
+.badge { flex:none; font-size:12px; font-weight:600; border-radius:999px; padding:2px 10px; }
+.pass { color:var(--ok); background:var(--ok-bg); }
+.fail { color:var(--bad); background:var(--bad-bg); }
+.body { padding:0 16px 16px; border-top:1px solid var(--line); }
+.answer { white-space:pre-wrap; background:var(--bg); border-radius:8px; padding:12px 14px; margin:12px 0; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+.chip { background:var(--chip); border-radius:6px; padding:2px 8px; font-size:13px; }
+.chip.hit { outline:1px solid var(--ok); }
+.chip.miss { outline:1px solid var(--bad); }
+.small { font-size:13px; color:var(--muted); }
+.retrieved td { font-size:13px; padding:7px 10px; }
+footer { margin-top:40px; color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>RAG Docs Assistant · relatório de avaliação</h1>
+  <p class="lead">Respostas reais do pipeline (ingestão → busca híbrida → geração com citações) para as
+  38 perguntas do golden set, geradas no CI a cada push na <code>main</code>.
+  Gerador: <code>extractive</code> · revisão <code>8874c3d</code> · <a href="https://github.com/lucassantana2301-bot/rag-docs-assistant">código-fonte</a>.</p>
+
+  <div class="grid"><div class="kpi"><span>Perguntas aprovadas</span><strong>26/38</strong></div><div class="kpi"><span>Hit rate@5 (híbrida)</span><strong>97%</strong></div><div class="kpi"><span>MRR (híbrida)</span><strong>0.866</strong></div><div class="kpi"><span>Citam a fonte certa</span><strong>85%</strong></div><div class="kpi"><span>Recusas corretas</span><strong>100%</strong></div></div>
+
+  <h2>Recuperação por modo de busca</h2>
+  <table>
+    <thead><tr><th>Modo</th><th>Hit rate@5</th><th>MRR</th><th>Perguntas</th></tr></thead>
+    <tbody><tr><td>Só BM25</td><td class='num'>97%</td><td class='num'>0.898</td><td class='num'>34</td></tr><tr><td>Só vetores</td><td class='num'>91%</td><td class='num'>0.870</td><td class='num'>34</td></tr><tr><td>Híbrida (RRF)</td><td class='num'>97%</td><td class='num'>0.866</td><td class='num'>34</td></tr></tbody>
+  </table>
+
+  <h2>Perguntas</h2>
+  <div class="toolbar" role="group" aria-label="Filtros">
+    <button type="button" data-filter="all" aria-pressed="true">Todas</button>
+    <button type="button" data-filter="fail" aria-pressed="false">Falhas</button>
+    <button type="button" data-filter="refusal" aria-pressed="false">Fora do escopo</button>
+    <input id="busca" type="search" placeholder="Filtrar por texto da pergunta" aria-label="Filtrar perguntas">
+    <span id="contagem" class="small" aria-live="polite"></span>
+  </div>
+  
+<details data-status="pass" data-kind="answerable" data-q="quantos dias de férias posso vender?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>1.</strong> Quantos dias de férias posso vender?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">É possível vender até 1/3 das férias, ou seja, até 10 dias. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-ferias.md › Política de férias › Abono pecuniário (venda de férias)</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-ferias.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">10 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Abono pecuniário (venda de férias)</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Fracionamento</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Como solicitar</div></td><td class="num">3</td><td class="num">3</td><td class="num">0.0317</td></tr><tr><td class="num">4</td><td>beneficios.md<div class="small">Benefícios › Licenças</div></td><td class="num">8</td><td class="num">8</td><td class="num">0.0294</td></tr><tr><td class="num">5</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiros 90 dias</div></td><td class="num">10</td><td class="num">9</td><td class="num">0.0288</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="em quantos períodos posso dividir minhas férias?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>2.</strong> Em quantos períodos posso dividir minhas férias?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Cada pessoa adquire o direito a 30 dias corridos de férias a cada 12 meses de trabalho (período aquisitivo). [1] As férias podem ser divididas em até três períodos, desde que um deles tenha pelo menos 14 dias corridos e os demais tenham pelo menos 5 dias corridos cada. [2]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-ferias.md › Política de férias › Direito e período aquisitivo</span><span class="chip hit">[2] politica-de-ferias.md › Política de férias › Fracionamento</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-ferias.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">três períodos</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Direito e período aquisitivo</div></td><td class="num">2</td><td class="num">1</td><td class="num">0.0325</td></tr><tr><td class="num">2</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Fracionamento</div></td><td class="num">1</td><td class="num">2</td><td class="num">0.0325</td></tr><tr><td class="num">3</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Abono pecuniário (venda de férias)</div></td><td class="num">4</td><td class="num">3</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Trabalho de outro país</div></td><td class="num">7</td><td class="num">10</td><td class="num">0.0292</td></tr><tr><td class="num">5</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiros 90 dias</div></td><td class="num">—</td><td class="num">8</td><td class="num">0.0147</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="com quanta antecedência preciso combinar as férias com o gestor?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>3.</strong> Com quanta antecedência preciso combinar as férias com o gestor?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Combine as datas com sua liderança com pelo menos 45 dias de antecedência. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-ferias.md › Política de férias › Como solicitar</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-ferias.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">45 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Como solicitar</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Abono pecuniário (venda de férias)</div></td><td class="num">2</td><td class="num">3</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Plantão e férias</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">4</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Dias presenciais</div></td><td class="num">7</td><td class="num">6</td><td class="num">0.0301</td></tr><tr><td class="num">5</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">6</td><td class="num">7</td><td class="num">0.0301</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="estagiário tem direito a vender o recesso?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>4.</strong> Estagiário tem direito a vender o recesso?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">Estagiários têm direito a 30 dias de recesso remunerado a cada 12 meses de estágio, que podem ser divididos em até dois períodos. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-ferias.md › Política de férias › Recesso de estagiários</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-ferias.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">não pode ser vendido</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Recesso de estagiários</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ politica-de-ferias.md<div class="small">Política de férias</div></td><td class="num">2</td><td class="num">3</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>✅ politica-de-ferias.md<div class="small">Política de férias › Direito e período aquisitivo</div></td><td class="num">4</td><td class="num">9</td><td class="num">0.0301</td></tr><tr><td class="num">4</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Comprovantes</div></td><td class="num">—</td><td class="num">2</td><td class="num">0.0161</td></tr><tr><td class="num">5</td><td>politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Acesso a produção</div></td><td class="num">—</td><td class="num">4</td><td class="num">0.0156</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="qual o prazo para pedir reembolso de despesas?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>5.</strong> Qual o prazo para pedir reembolso de despesas?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">A solicitação de reembolso deve ser feita em até 30 dias corridos após a data da despesa, pelo app Corporate Expenses. [1] Quem tem cartão corporativo não pede reembolso: presta contas das despesas do cartão no mesmo app, também em até 30 dias. [3]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] reembolso-de-despesas.md › Reembolso de despesas › Prazo para solicitar</span><span class="chip hit">[3] reembolso-de-despesas.md › Reembolso de despesas › Cartão corporativo</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">reembolso-de-despesas.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">30 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Prazo para solicitar</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Cartão corporativo</div></td><td class="num">2</td><td class="num">3</td><td class="num">0.0320</td></tr><tr><td class="num">4</td><td>code-review.md<div class="small">Boas práticas de code review › Para quem abre o pull request</div></td><td class="num">6</td><td class="num">7</td><td class="num">0.0301</td></tr><tr><td class="num">5</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">8</td><td class="num">8</td><td class="num">0.0294</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="qual o limite diário para refeições quando estou viajando a trabalho?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>6.</strong> Qual o limite diário para refeições quando estou viajando a trabalho?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 5 · cita a fonte esperada: não · contém os fatos-chave: não</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">reembolso-de-despesas.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">R$ 120,00</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Limites e tempo de resposta</div></td><td class="num">1</td><td class="num">3</td><td class="num">0.0323</td></tr><tr><td class="num">2</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Trabalho de outro país</div></td><td class="num">4</td><td class="num">1</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Equipamentos</div></td><td class="num">5</td><td class="num">2</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">3</td><td class="num">6</td><td class="num">0.0310</td></tr><tr><td class="num">5</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Limites por categoria</div></td><td class="num">2</td><td class="num">8</td><td class="num">0.0308</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="quanto a empresa paga por quilômetro se eu usar meu carro?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>7.</strong> Quanto a empresa paga por quilômetro se eu usar meu carro?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 4 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Sessões de terapia online com psicólogos parceiros, com 4 sessões por mês pagas pela empresa. [1] Quilometragem com carro próprio: R$ 1,10 por km rodado, com origem e destino informados. [4]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip ">[1] beneficios.md › Benefícios › Bem-estar</span><span class="chip hit">[4] reembolso-de-despesas.md › Reembolso de despesas › Limites por categoria</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">reembolso-de-despesas.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">1,10</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>beneficios.md<div class="small">Benefícios › Bem-estar</div></td><td class="num">3</td><td class="num">1</td><td class="num">0.0323</td></tr><tr><td class="num">2</td><td>beneficios.md<div class="small">Benefícios › Trabalho remoto</div></td><td class="num">6</td><td class="num">7</td><td class="num">0.0301</td></tr><tr><td class="num">3</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Equipamentos</div></td><td class="num">4</td><td class="num">11</td><td class="num">0.0297</td></tr><tr><td class="num">4</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Limites por categoria</div></td><td class="num">5</td><td class="num">10</td><td class="num">0.0297</td></tr><tr><td class="num">5</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">1</td><td class="num">22</td><td class="num">0.0286</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="em que dia da semana o reembolso cai na conta?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>8.</strong> Em que dia da semana o reembolso cai na conta?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">Deslocamento casa-escritório no dia a dia não é reembolsável. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] reembolso-de-despesas.md › Reembolso de despesas › Limites por categoria</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">reembolso-de-despesas.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">quinta-feira</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Limites por categoria</div></td><td class="num">4</td><td class="num">1</td><td class="num">0.0320</td></tr><tr><td class="num">2</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Aprovação e pagamento</div></td><td class="num">2</td><td class="num">5</td><td class="num">0.0315</td></tr><tr><td class="num">3</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeira semana</div></td><td class="num">1</td><td class="num">7</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>✅ reembolso-de-despesas.md<div class="small">Reembolso de despesas › Prazo para solicitar</div></td><td class="num">6</td><td class="num">3</td><td class="num">0.0310</td></tr><tr><td class="num">5</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiro dia</div></td><td class="num">3</td><td class="num">10</td><td class="num">0.0302</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="quem aciona o incident commander num sev1?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>9.</strong> Quem aciona o incident commander num SEV1?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Em SEV1 e SEV2, quem está de plantão no momento aciona o IC da escala pelo PagerDuty (serviço &quot;incident-commander&quot;). [1] Correções de incidente SEV1 ou SEV2 podem ser feitas fora da janela com aprovação do incident commander. [2]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] runbook-de-incidentes.md › Runbook de gestão de incidentes › Papéis</span><span class="chip ">[2] guia-de-deploy.md › Guia de deploy › Janelas de deploy</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">runbook-de-incidentes.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">plantão</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Papéis</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Janelas de deploy</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Severidades</div></td><td class="num">4</td><td class="num">3</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">3</td><td class="num">7</td><td class="num">0.0308</td></tr><tr><td class="num">5</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">—</td><td class="num">6</td><td class="num">0.0152</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="qual o prazo para escrever o postmortem de um incidente?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>10.</strong> Qual o prazo para escrever o postmortem de um incidente?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">O postmortem precisa ter linha do tempo, impacto em clientes e valores, causa raiz e ações com dono e prazo. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] runbook-de-incidentes.md › Runbook de gestão de incidentes › Postmortem</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">runbook-de-incidentes.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">5 dias úteis</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Fluxo de resposta</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Papéis</div></td><td class="num">6</td><td class="num">3</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Prazo para solicitar</div></td><td class="num">2</td><td class="num">8</td><td class="num">0.0308</td></tr><tr><td class="num">5</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Janelas de deploy</div></td><td class="num">4</td><td class="num">9</td><td class="num">0.0301</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="com que frequência atualizar a status page durante um incidente grave?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>11.</strong> Com que frequência atualizar a status page durante um incidente grave?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Comunicação: atualiza a status page e o canal #incidentes a cada 30 minutos em SEV1 e a cada hora em SEV2. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] runbook-de-incidentes.md › Runbook de gestão de incidentes › Papéis</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">runbook-de-incidentes.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">30 minutos</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Papéis</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Fluxo de resposta</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>politica-de-ferias.md<div class="small">Política de férias › Plantão e férias</div></td><td class="num">2</td><td class="num">6</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">4</td><td class="num">4</td><td class="num">0.0312</td></tr><tr><td class="num">5</td><td>politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Como reportar um incidente de segurança</div></td><td class="num">7</td><td class="num">7</td><td class="num">0.0299</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="em quanto tempo o plantonista precisa responder um alerta?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>12.</strong> Em quanto tempo o plantonista precisa responder um alerta?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">O plantonista deve responder ao alerta em até 5 minutos. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] runbook-de-incidentes.md › Runbook de gestão de incidentes › Plantão</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">runbook-de-incidentes.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">5 minutos</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Plantão</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>politica-de-ferias.md<div class="small">Política de férias › Plantão e férias</div></td><td class="num">5</td><td class="num">2</td><td class="num">0.0315</td></tr><tr><td class="num">3</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Limites e tempo de resposta</div></td><td class="num">3</td><td class="num">6</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>✅ runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Papéis</div></td><td class="num">6</td><td class="num">3</td><td class="num">0.0310</td></tr><tr><td class="num">5</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Horário e disponibilidade</div></td><td class="num">4</td><td class="num">5</td><td class="num">0.0310</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="posso fazer deploy na sexta-feira?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>13.</strong> Posso fazer deploy na sexta-feira?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Não há deploy em produção na sexta-feira, em véspera de feriado nem nos dias de pico de pagamentos (dia 5 e dia 20 de cada mês). [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] guia-de-deploy.md › Guia de deploy › Janelas de deploy</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">guia-de-deploy.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">sexta-feira</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy › Janelas de deploy</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeira semana</div></td><td class="num">2</td><td class="num">5</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy › Pipeline</div></td><td class="num">5</td><td class="num">3</td><td class="num">0.0313</td></tr><tr><td class="num">5</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Ferramentas</div></td><td class="num">6</td><td class="num">11</td><td class="num">0.0292</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="como funciona o canary dos serviços de pagamento?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>14.</strong> Como funciona o canary dos serviços de pagamento?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 3 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Serviços do domínio de pagamentos usam canary: 5% do tráfego por 15 minutos, depois 25%, 50% e 100%. [3]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[3] guia-de-deploy.md › Guia de deploy › Estratégia de rollout</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">guia-de-deploy.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">5%</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Serviços</div></td><td class="num">3</td><td class="num">1</td><td class="num">0.0323</td></tr><tr><td class="num">2</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy › Estratégia de rollout</div></td><td class="num">1</td><td class="num">6</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Estados do pagamento</div></td><td class="num">5</td><td class="num">3</td><td class="num">0.0313</td></tr><tr><td class="num">5</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiro dia</div></td><td class="num">4</td><td class="num">9</td><td class="num">0.0301</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="quanto tempo leva para reverter uma versão em produção?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>15.</strong> Quanto tempo leva para reverter uma versão em produção?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">O Argo Rollouts interrompe e reverte sozinho se a taxa de erro passar de 1% ou a latência p99 subir mais de 20% em relação à versão anterior. [3]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[3] guia-de-deploy.md › Guia de deploy › Estratégia de rollout</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">guia-de-deploy.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">3 minutos</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy › Rollback</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy › Estratégia de rollout</div></td><td class="num">2</td><td class="num">3</td><td class="num">0.0320</td></tr><tr><td class="num">4</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes</div></td><td class="num">7</td><td class="num">5</td><td class="num">0.0303</td></tr><tr><td class="num">5</td><td>politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Acesso a produção</div></td><td class="num">6</td><td class="num">8</td><td class="num">0.0299</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="quantas aprovações precisa um pr que mexe em regras de antifraude?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>16.</strong> Quantas aprovações precisa um PR que mexe em regras de antifraude?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Mudanças em infra/, em regras de antifraude ou em cálculo de tarifas exigem duas aprovações, sendo uma de pessoa sênior. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] guia-de-deploy.md › Guia de deploy › Aprovação de mudanças</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">code-review.md</span><span class="chip ">guia-de-deploy.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">duas aprovações</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ guia-de-deploy.md<div class="small">Guia de deploy › Aprovação de mudanças</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ code-review.md<div class="small">Boas práticas de code review › Merge</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">6</td><td class="num">3</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>politica-de-ferias.md<div class="small">Política de férias › Plantão e férias</div></td><td class="num">4</td><td class="num">8</td><td class="num">0.0303</td></tr><tr><td class="num">5</td><td>✅ code-review.md<div class="small">Boas práticas de code review › Para quem abre o pull request</div></td><td class="num">3</td><td class="num">10</td><td class="num">0.0302</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="posso usar sms como segundo fator de autenticação?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>17.</strong> Posso usar SMS como segundo fator de autenticação?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">SMS não é aceito como segundo fator. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-seguranca-da-informacao.md › Política de segurança da informação › Contas e senhas</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-seguranca-da-informacao.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">SMS</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Contas e senhas</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Limites e tempo de resposta</div></td><td class="num">2</td><td class="num">5</td><td class="num">0.0315</td></tr><tr><td class="num">3</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Como reportar um incidente de segurança</div></td><td class="num">—</td><td class="num">2</td><td class="num">0.0161</td></tr><tr><td class="num">4</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Dados de clientes</div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr><tr><td class="num">5</td><td>beneficios.md<div class="small">Benefícios › Educação</div></td><td class="num">—</td><td class="num">4</td><td class="num">0.0156</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="por quanto tempo vale o acesso temporário ao ambiente de produção?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>18.</strong> Por quanto tempo vale o acesso temporário ao ambiente de produção?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">Ninguém tem acesso permanente a produção. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-seguranca-da-informacao.md › Política de segurança da informação › Acesso a produção</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-seguranca-da-informacao.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">4 horas</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Acesso a produção</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Dados de clientes</div></td><td class="num">2</td><td class="num">6</td><td class="num">0.0313</td></tr><tr><td class="num">3</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Contas e senhas</div></td><td class="num">5</td><td class="num">4</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeira semana</div></td><td class="num">3</td><td class="num">7</td><td class="num">0.0308</td></tr><tr><td class="num">5</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">7</td><td class="num">5</td><td class="num">0.0303</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="perdi meu notebook, em quanto tempo tenho que avisar?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>19.</strong> Perdi meu notebook, em quanto tempo tenho que avisar?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 3 · cita a fonte esperada: não · contém os fatos-chave: não</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-seguranca-da-informacao.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">2 horas</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">2</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiro dia</div></td><td class="num">2</td><td class="num">4</td><td class="num">0.0318</td></tr><tr><td class="num">3</td><td>✅ politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Como reportar um incidente de segurança</div></td><td class="num">1</td><td class="num">7</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Fluxo de resposta</div></td><td class="num">5</td><td class="num">3</td><td class="num">0.0313</td></tr><tr><td class="num">5</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Severidades</div></td><td class="num">4</td><td class="num">6</td><td class="num">0.0308</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="posso colar código da empresa no chatgpt?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>20.</strong> Posso colar código da empresa no ChatGPT?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa fora do top-k · cita a fonte esperada: não · contém os fatos-chave: não</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-seguranca-da-informacao.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">aprovadas</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>beneficios.md<div class="small">Benefícios › Bem-estar</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Feature flags</div></td><td class="num">5</td><td class="num">2</td><td class="num">0.0315</td></tr><tr><td class="num">3</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Rollback</div></td><td class="num">6</td><td class="num">3</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Equipamentos</div></td><td class="num">3</td><td class="num">6</td><td class="num">0.0310</td></tr><tr><td class="num">5</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Ferramentas</div></td><td class="num">2</td><td class="num">8</td><td class="num">0.0308</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="qual a meta de latência da api de pagamentos?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>21.</strong> Qual a meta de latência da API de pagamentos?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">A meta (SLO) da payments-api é responder em até 300 ms no p99 e ter 99,95% de disponibilidade no mês. [1] SEV1 — Pagamentos fora do ar, vazamento de dados ou perda financeira em andamento — imediato [5]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] arquitetura-de-pagamentos.md › Arquitetura do processamento de pagamentos › Limites e tempo de resposta</span><span class="chip ">[5] runbook-de-incidentes.md › Runbook de gestão de incidentes › Severidades</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">arquitetura-de-pagamentos.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">300 ms</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Limites e tempo de resposta</div></td><td class="num">1</td><td class="num">5</td><td class="num">0.0318</td></tr><tr><td class="num">2</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Outbox</div></td><td class="num">4</td><td class="num">2</td><td class="num">0.0318</td></tr><tr><td class="num">3</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos</div></td><td class="num">7</td><td class="num">1</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Estratégia de rollout</div></td><td class="num">2</td><td class="num">7</td><td class="num">0.0311</td></tr><tr><td class="num">5</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Severidades</div></td><td class="num">3</td><td class="num">8</td><td class="num">0.0306</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="como o sistema evita cobrar o mesmo pagamento duas vezes?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>22.</strong> Como o sistema evita cobrar o mesmo pagamento duas vezes?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">Visão geral dos serviços que processam pagamentos na Nimbus Pay e das decisões de projeto que garantem que nenhum pagamento seja cobrado duas vezes. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] arquitetura-de-pagamentos.md › Arquitetura do processamento de pagamentos</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">arquitetura-de-pagamentos.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">Idempotency-Key</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Outbox</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Estados do pagamento</div></td><td class="num">5</td><td class="num">3</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Cartão corporativo</div></td><td class="num">4</td><td class="num">11</td><td class="num">0.0297</td></tr><tr><td class="num">5</td><td>code-review.md<div class="small">Boas práticas de code review › Merge</div></td><td class="num">6</td><td class="num">9</td><td class="num">0.0296</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="por que usamos o padrão outbox?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>23.</strong> Por que usamos o padrão outbox?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">A payments-api grava o pagamento e o evento a publicar na mesma transação do banco (padrão transactional outbox). [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] arquitetura-de-pagamentos.md › Arquitetura do processamento de pagamentos › Outbox</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">arquitetura-de-pagamentos.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">mesma transação</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Outbox</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Limites e tempo de resposta</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Limites por categoria</div></td><td class="num">3</td><td class="num">9</td><td class="num">0.0304</td></tr><tr><td class="num">4</td><td>✅ arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Serviços</div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr><tr><td class="num">5</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Estratégia de rollout</div></td><td class="num">—</td><td class="num">4</td><td class="num">0.0156</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="quais dias da semana o time precisa ir ao escritório?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>24.</strong> Quais dias da semana o time precisa ir ao escritório?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Times no modelo híbrido vão ao escritório duas vezes por semana, às terças e quintas-feiras. [1] Todo SEV1 e SEV2 tem postmortem sem culpados (blameless), escrito em até 5 dias úteis após o encerramento e revisado na reunião semanal de confiabilidade de quarta-feira. [5]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-trabalho-hibrido.html › Política de trabalho híbrido › Dias presenciais</span><span class="chip ">[5] runbook-de-incidentes.md › Runbook de gestão de incidentes › Postmortem</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-trabalho-hibrido.html</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">terças</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Dias presenciais</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiro dia</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeira semana</div></td><td class="num">3</td><td class="num">4</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiros 90 dias</div></td><td class="num">5</td><td class="num">6</td><td class="num">0.0305</td></tr><tr><td class="num">5</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">4</td><td class="num">9</td><td class="num">0.0301</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="posso trabalhar de outro país por algumas semanas?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>25.</strong> Posso trabalhar de outro país por algumas semanas?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: não · contém os fatos-chave: não</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-trabalho-hibrido.html</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">30 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Trabalho de outro país</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiro dia</div></td><td class="num">4</td><td class="num">5</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Serviços</div></td><td class="num">5</td><td class="num">18</td><td class="num">0.0282</td></tr><tr><td class="num">5</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Idempotência</div></td><td class="num">3</td><td class="num">—</td><td class="num">0.0159</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="qual é o horário central para marcar reuniões?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>26.</strong> Qual é o horário central para marcar reuniões?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">O horário central de colaboração é das 10h às 16h (horário de Brasília): reuniões devem ficar nessa faixa. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-trabalho-hibrido.html › Política de trabalho híbrido › Horário e disponibilidade</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-trabalho-hibrido.html</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">10h às 16h</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Horário e disponibilidade</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Severidades</div></td><td class="num">2</td><td class="num">7</td><td class="num">0.0311</td></tr><tr><td class="num">3</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Serviços</div></td><td class="num">4</td><td class="num">6</td><td class="num">0.0308</td></tr><tr><td class="num">4</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">3</td><td class="num">10</td><td class="num">0.0302</td></tr><tr><td class="num">5</td><td>politica-de-seguranca-da-informacao.md<div class="small">Política de segurança da informação › Dados de clientes</div></td><td class="num">—</td><td class="num">2</td><td class="num">0.0161</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="qual a antecedência mínima para comprar passagem de voo nacional?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>27.</strong> Qual a antecedência mínima para comprar passagem de voo nacional?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Passagens aéreas As passagens são compradas pela agência parceira em classe econômica, com antecedência mínima de 14 dias para voos nacionais. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-viagens.pdf</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-viagens.pdf</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">14 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-viagens.pdf<div class="small"></div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ politica-de-viagens.pdf<div class="small"></div></td><td class="num">4</td><td class="num">2</td><td class="num">0.0318</td></tr><tr><td class="num">3</td><td>politica-de-ferias.md<div class="small">Política de férias › Como solicitar</div></td><td class="num">3</td><td class="num">4</td><td class="num">0.0315</td></tr><tr><td class="num">4</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Dias presenciais</div></td><td class="num">2</td><td class="num">10</td><td class="num">0.0304</td></tr><tr><td class="num">5</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Estratégia de rollout</div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="qual o valor da diária em viagem internacional?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>28.</strong> Qual o valor da diária em viagem internacional?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Diárias Viagens internacionais têm diária de US$ 70 para alimentação, paga antecipadamente, sem necessidade de comprovantes. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] politica-de-viagens.pdf</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">politica-de-viagens.pdf</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">US$ 70</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ politica-de-viagens.pdf<div class="small"></div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>beneficios.md<div class="small">Benefícios › Alimentação</div></td><td class="num">2</td><td class="num">6</td><td class="num">0.0313</td></tr><tr><td class="num">3</td><td>✅ politica-de-viagens.pdf<div class="small"></div></td><td class="num">6</td><td class="num">2</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>politica-de-ferias.md<div class="small">Política de férias › Abono pecuniário (venda de férias)</div></td><td class="num">4</td><td class="num">8</td><td class="num">0.0303</td></tr><tr><td class="num">5</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Limites por categoria</div></td><td class="num">5</td><td class="num">7</td><td class="num">0.0303</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="a empresa reembolsa a prova de certificação aws?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>29.</strong> A empresa reembolsa a prova de certificação AWS?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Certificações de nuvem (AWS, Azure, GCP) têm a taxa de prova reembolsada integralmente na primeira tentativa. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] beneficios.md › Benefícios › Educação</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">beneficios.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">primeira tentativa</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ beneficios.md<div class="small">Benefícios › Educação</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>✅ beneficios.md<div class="small">Benefícios › Bem-estar</div></td><td class="num">2</td><td class="num">8</td><td class="num">0.0308</td></tr><tr><td class="num">3</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">6</td><td class="num">4</td><td class="num">0.0308</td></tr><tr><td class="num">4</td><td>✅ beneficios.md<div class="small">Benefícios › Trabalho remoto</div></td><td class="num">4</td><td class="num">10</td><td class="num">0.0299</td></tr><tr><td class="num">5</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">7</td><td class="num">7</td><td class="num">0.0299</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="qual o valor do vale alimentação?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>30.</strong> Qual o valor do vale alimentação?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: não · contém os fatos-chave: não</p>
+    <div class="answer">Em viagens nacionais vale o limite de alimentação da política de reembolso de despesas. [2]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip ">[2] politica-de-viagens.pdf</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">beneficios.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">1.200,00</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ beneficios.md<div class="small">Benefícios › Alimentação</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Limites por categoria</div></td><td class="num">6</td><td class="num">11</td><td class="num">0.0292</td></tr><tr><td class="num">4</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Comprovantes</div></td><td class="num">4</td><td class="num">20</td><td class="num">0.0281</td></tr><tr><td class="num">5</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Serviços</div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="quanto tempo dura a licença-paternidade?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>31.</strong> Quanto tempo dura a licença-paternidade?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Licença-maternidade de 180 dias e licença-paternidade de 40 dias, ambas também para adoção. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] beneficios.md › Benefícios › Licenças</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">beneficios.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">40 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ beneficios.md<div class="small">Benefícios › Licenças</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Severidades</div></td><td class="num">3</td><td class="num">3</td><td class="num">0.0317</td></tr><tr><td class="num">4</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Limites e tempo de resposta</div></td><td class="num">5</td><td class="num">5</td><td class="num">0.0308</td></tr><tr><td class="num">5</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Fluxo de resposta</div></td><td class="num">4</td><td class="num">14</td><td class="num">0.0291</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="qual o tamanho ideal de um pull request?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>32.</strong> Qual o tamanho ideal de um pull request?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">Pull requests pequenos: o ideal é até 400 linhas alteradas. [1]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] code-review.md › Boas práticas de code review › Para quem abre o pull request</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">code-review.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">400 linhas</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ code-review.md<div class="small">Boas práticas de code review › Para quem abre o pull request</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Aprovação de mudanças</div></td><td class="num">3</td><td class="num">2</td><td class="num">0.0320</td></tr><tr><td class="num">3</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeira semana</div></td><td class="num">2</td><td class="num">4</td><td class="num">0.0318</td></tr><tr><td class="num">4</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Comprovantes</div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr><tr><td class="num">5</td><td>arquitetura-de-pagamentos.md<div class="small">Arquitetura do processamento de pagamentos › Idempotência</div></td><td class="num">—</td><td class="num">5</td><td class="num">0.0154</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="answerable" data-q="o que preciso fazer na primeira semana como engenheiro novo?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>33.</strong> O que preciso fazer na primeira semana como engenheiro novo?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 1 · cita a fonte esperada: sim · contém os fatos-chave: sim</p>
+    <div class="answer">O objetivo da primeira semana é fazer um primeiro deploy em produção: uma mudança pequena, escolhida pelo seu time, passando por todo o fluxo de pull request, revisão e pipeline. [1] Este guia cobre suas primeiras semanas no time de engenharia da Nimbus Pay. [5]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip hit">[1] onboarding-engenharia.md › Onboarding de engenharia › Primeira semana</span><span class="chip hit">[5] onboarding-engenharia.md › Onboarding de engenharia</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">onboarding-engenharia.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip hit">deploy</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>✅ onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeira semana</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>beneficios.md<div class="small">Benefícios › Educação</div></td><td class="num">2</td><td class="num">6</td><td class="num">0.0313</td></tr><tr><td class="num">3</td><td>code-review.md<div class="small">Boas práticas de code review › Para quem revisa</div></td><td class="num">4</td><td class="num">11</td><td class="num">0.0297</td></tr><tr><td class="num">4</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Dias presenciais</div></td><td class="num">3</td><td class="num">20</td><td class="num">0.0284</td></tr><tr><td class="num">5</td><td>✅ onboarding-engenharia.md<div class="small">Onboarding de engenharia</div></td><td class="num">—</td><td class="num">2</td><td class="num">0.0161</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="fail" data-kind="answerable" data-q="quando entro na escala de plantão depois de contratado?">
+  <summary>
+    <span class="badge fail">falhou</span>
+    <span><strong>34.</strong> Quando entro na escala de plantão depois de contratado?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fonte certa na posição 3 · cita a fonte esperada: sim · contém os fatos-chave: não</p>
+    <div class="answer">Quem participa da escala de plantão precisa encontrar substituto e atualizar a escala no PagerDuty antes de a solicitação ser aprovada. [1] A partir daí você entra na escala de plantão normal. [3]</div>
+    <div class="small">Citações</div><div class="chips"><span class="chip ">[1] politica-de-ferias.md › Política de férias › Plantão e férias</span><span class="chip hit">[3] onboarding-engenharia.md › Onboarding de engenharia › Primeiros 90 dias</span></div>
+    <div class="small">Fontes esperadas</div><div class="chips"><span class="chip ">onboarding-engenharia.md</span></div>
+    <div class="small">Fatos-chave exigidos</div><div class="chips"><span class="chip miss">90 dias</span></div>
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>politica-de-ferias.md<div class="small">Política de férias › Plantão e férias</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Plantão</div></td><td class="num">2</td><td class="num">2</td><td class="num">0.0323</td></tr><tr><td class="num">3</td><td>✅ onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiros 90 dias</div></td><td class="num">3</td><td class="num">3</td><td class="num">0.0317</td></tr><tr><td class="num">4</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Papéis</div></td><td class="num">4</td><td class="num">4</td><td class="num">0.0312</td></tr><tr><td class="num">5</td><td>beneficios.md<div class="small">Benefícios › Saúde</div></td><td class="num">8</td><td class="num">5</td><td class="num">0.0301</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="refusal" data-q="qual é a política de stock options da empresa?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>35.</strong> Qual é a política de stock options da empresa?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fora do escopo dos documentos · recusou corretamente</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    
+    
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Equipamentos</div></td><td class="num">1</td><td class="num">2</td><td class="num">0.0325</td></tr><tr><td class="num">2</td><td>politica-de-ferias.md<div class="small">Política de férias</div></td><td class="num">7</td><td class="num">1</td><td class="num">0.0313</td></tr><tr><td class="num">3</td><td>beneficios.md<div class="small">Benefícios › Bem-estar</div></td><td class="num">2</td><td class="num">6</td><td class="num">0.0313</td></tr><tr><td class="num">4</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">5</td><td class="num">3</td><td class="num">0.0313</td></tr><tr><td class="num">5</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido</div></td><td class="num">8</td><td class="num">5</td><td class="num">0.0301</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="refusal" data-q="quantos funcionários a empresa tem no japão?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>36.</strong> Quantos funcionários a empresa tem no Japão?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fora do escopo dos documentos · recusou corretamente</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    
+    
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>beneficios.md<div class="small">Benefícios › Bem-estar</div></td><td class="num">1</td><td class="num">1</td><td class="num">0.0328</td></tr><tr><td class="num">2</td><td>politica-de-trabalho-hibrido.html<div class="small">Política de trabalho híbrido › Equipamentos</div></td><td class="num">2</td><td class="num">5</td><td class="num">0.0315</td></tr><tr><td class="num">3</td><td>beneficios.md<div class="small">Benefícios › Trabalho remoto</div></td><td class="num">3</td><td class="num">6</td><td class="num">0.0310</td></tr><tr><td class="num">4</td><td>politica-de-ferias.md<div class="small">Política de férias › Direito e período aquisitivo</div></td><td class="num">4</td><td class="num">13</td><td class="num">0.0293</td></tr><tr><td class="num">5</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">5</td><td class="num">14</td><td class="num">0.0289</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="refusal" data-q="qual o salário inicial de um engenheiro júnior?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>37.</strong> Qual o salário inicial de um engenheiro júnior?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fora do escopo dos documentos · recusou corretamente</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    
+    
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>reembolso-de-despesas.md<div class="small">Reembolso de despesas › Aprovação e pagamento</div></td><td class="num">1</td><td class="num">9</td><td class="num">0.0309</td></tr><tr><td class="num">2</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia</div></td><td class="num">—</td><td class="num">1</td><td class="num">0.0164</td></tr><tr><td class="num">3</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiro dia</div></td><td class="num">—</td><td class="num">2</td><td class="num">0.0161</td></tr><tr><td class="num">4</td><td>onboarding-engenharia.md<div class="small">Onboarding de engenharia › Primeiros 90 dias</div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr><tr><td class="num">5</td><td>beneficios.md<div class="small">Benefícios › Alimentação</div></td><td class="num">—</td><td class="num">4</td><td class="num">0.0156</td></tr></tbody>
+    </table>
+  </div>
+</details>
+<details data-status="pass" data-kind="refusal" data-q="como configuro o cluster kubernetes de machine learning?">
+  <summary>
+    <span class="badge pass">passou</span>
+    <span><strong>38.</strong> Como configuro o cluster Kubernetes de machine learning?</span>
+  </summary>
+  <div class="body">
+    <p class="small">fora do escopo dos documentos · recusou corretamente</p>
+    <div class="answer">Não encontrei essa informação nos documentos indexados.</div>
+    
+    
+    
+    <div class="small" style="margin-top:12px">Trechos recuperados (busca híbrida)</div>
+    <table class="retrieved">
+      <thead><tr><th>#</th><th>Documento › seção</th><th>BM25</th><th>Vetor</th><th>RRF</th></tr></thead>
+      <tbody><tr><td class="num">1</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Severidades</div></td><td class="num">—</td><td class="num">1</td><td class="num">0.0164</td></tr><tr><td class="num">2</td><td>guia-de-deploy.md<div class="small">Guia de deploy › Pipeline</div></td><td class="num">—</td><td class="num">2</td><td class="num">0.0161</td></tr><tr><td class="num">3</td><td>politica-de-viagens.pdf<div class="small"></div></td><td class="num">—</td><td class="num">3</td><td class="num">0.0159</td></tr><tr><td class="num">4</td><td>runbook-de-incidentes.md<div class="small">Runbook de gestão de incidentes › Postmortem</div></td><td class="num">—</td><td class="num">4</td><td class="num">0.0156</td></tr><tr><td class="num">5</td><td>beneficios.md<div class="small">Benefícios › Alimentação</div></td><td class="num">—</td><td class="num">5</td><td class="num">0.0154</td></tr></tbody>
+    </table>
+  </div>
+</details>
+
+  <footer>Gerado em 2026-11-22 22:48 UTC. Uma pergunta passa quando a fonte certa aparece no top-k,
+  a resposta cita essa fonte e contém os fatos-chave; perguntas fora do escopo passam quando o
+  assistente se recusa a responder.</footer>
+</main>
+<script>
+const cards = [...document.querySelectorAll('details[data-status]')];
+const buttons = [...document.querySelectorAll('.toolbar button')];
+const search = document.querySelector('#busca');
+let filter = 'all';
+function apply() {
+  const term = search.value.trim().toLowerCase();
+  let visible = 0;
+  for (const card of cards) {
+    const show = (filter === 'all' || card.dataset.status === filter || card.dataset.kind === filter)
+      && (!term || card.dataset.q.includes(term));
+    card.hidden = !show;
+    if (show) visible++;
+  }
+  document.querySelector('#contagem').textContent = visible + ' de ' + cards.length;
+}
+for (const button of buttons) button.addEventListener('click', () => {
+  filter = button.dataset.filter;
+  for (const b of buttons) b.setAttribute('aria-pressed', String(b === button));
+  apply();
+});
+search.addEventListener('input', apply);
+apply();
+</script>
+</body>
+</html>
