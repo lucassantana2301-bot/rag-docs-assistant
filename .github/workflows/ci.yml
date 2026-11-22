@@ -23,7 +23,7 @@ jobs:
         python: ['3.12', '3.13']
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v8.1.0  # tags imutáveis a partir da v8
+      - uses: astral-sh/setup-uv@v10.4.0  # tags imutáveis a partir da v8
         with:
           python-version: ${{ matrix.python }}
           enable-cache: true
