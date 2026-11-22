@@ -1,6 +1,6 @@
 [project]
 name = "rag-docs-assistant"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Assistente de perguntas sobre documentos internos com busca híbrida (BM25 + vetores), respostas citadas e avaliação automática."
 readme = "README.md"
 license = "MIT"
@@ -33,6 +33,9 @@ dev = [
 [build-system]
 requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/rag_docs/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rag_docs"]
@@ -73,3 +76,6 @@ filterwarnings = [
 [tool.coverage.run]
 source = ["rag_docs"]
 branch = true
+
+[tool.coverage.report]
+exclude_also = ["if __name__ == .__main__.:"]
