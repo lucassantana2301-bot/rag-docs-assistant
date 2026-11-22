@@ -1,0 +1,66 @@
+name: Pages
+
+# Publica no GitHub Pages (branch gh-pages):
+#   /            relatório navegável da avaliação (respostas reais do pipeline no golden set)
+#   /coverage/   relatório HTML de cobertura de testes
+#   /badges/     JSON do badge de cobertura consumido pelo shields.io
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Avaliação, cobertura e badge
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.4.0
+        with:
+          python-version: '3.15'
+          enable-cache: true
+      - run: uv sync --frozen
+
+      - name: Testes com cobertura
+        run: uv run pytest --cov --cov-report=html:site/coverage --cov-report=json:coverage.json
+
+      - name: Relatório de avaliação
+        run: |
+          uv run rag --db /tmp/eval.db ingest corpus
+          uv run rag --db /tmp/eval.db eval eval/golden.jsonl \
+            --html site/index.html --json-out site/eval.json --revision "$GITHUB_SHA"
+
+      - name: Badge e arquivos do site
+        run: |
+          uv run python scripts/coverage_badge.py coverage.json site/badges/coverage.json
+          rm -f site/coverage/.gitignore
+          touch site/.nojekyll
+
+      - name: Publica na branch gh-pages
+        working-directory: site
+        run: |
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "deploy: ${GITHUB_SHA::7}"
+          git push -q -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resumo
+        run: |
+          {
+            echo "### Publicado"
+            echo "- Avaliação: https://${GITHUB_REPOSITORY_OWNER}.github.io/${{ github.event.repository.name }}/"
+            echo "- Cobertura: https://${GITHUB_REPOSITORY_OWNER}.github.io/${{ github.event.repository.name }}/coverage/"
+          } >> "$GITHUB_STEP_SUMMARY"
